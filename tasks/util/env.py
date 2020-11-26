@@ -1,3 +1,3 @@
 from os.path import dirname, realpath
 
-PROJ_ROOT = dirname(dirname(dirname(dirname(realpath(__file__)))))
+PROJ_ROOT = dirname(dirname(dirname(realpath(__file__))))

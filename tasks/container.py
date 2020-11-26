@@ -29,7 +29,6 @@ def _do_container_build(name, nocache=False, push=False):
         no_cache_str,
         "-t {}".format(tag_name),
         "-f {}".format(dockerfile),
-        "--build-arg EXPERIMENTS_VERSION={}".format(ver),
         ".",
     ]
     build_cmd = " ".join(build_cmd)
@@ -50,7 +49,7 @@ def _do_push(name):
 
 
 @task
-def build(ctx, c, nocache=False, push=False):
+def build(ctx, nocache=False, push=False):
     """
     Build current version of the base experiment container.
     """

@@ -1,6 +1,6 @@
 from os.path import join
 
-from util.env import PROJ_ROOT
+from tasks.util.env import PROJ_ROOT
 
 _version = None
 
