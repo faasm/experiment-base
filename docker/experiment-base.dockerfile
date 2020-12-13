@@ -1,4 +1,4 @@
-FROM faasm/cpp-sysroot:0.0.11
+FROM faasm/cpp-sysroot:0.0.15
 
 RUN apt-get update
 RUN apt-get install -y \
