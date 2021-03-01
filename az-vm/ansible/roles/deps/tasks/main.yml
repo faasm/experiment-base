@@ -1,0 +1,21 @@
+---
+
+- name: "Install build essential"
+  become: yes
+  apt:
+    update_cache: yes
+    name: build-essential
+    state: present
+
+- name: "Install GCC"
+  become: yes
+  apt:
+    update_cache: yes
+    name: gcc
+    state: present
+
+- name: "Install make"
+  become: yes
+  apt:
+    name: make
+    state: present

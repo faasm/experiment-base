@@ -9,7 +9,7 @@ This repository is the common entrypoint for all experiments in [faabric](
 1. [Experiment Index](#experiment-index)
 2. [Quick Start](#quick-start)
 3. [First Time Users](#first-time-users)
-4. [Running a New Experiment](#new-experiment) 
+4. [Creating a New Experiment](#new-experiment) 
 5. [Cluster Provisioning](#cluster-provisioning)
 6. [Troubleshooting](#troubleshooting)
 
@@ -56,7 +56,24 @@ az account set -s e594b650-46d3-4375-be21-2ea11e8ed741
 if any of the previous fails, open an issue in this repo and mention one of its
 maintainers.
 
-## Running a new experiment <a name="new-experiment">
+## Creating a new experiment <a name="new-experiment">
+
+When creating a new experiment from scratch, there are a few steps you need to
+take for seamless integration and automation with the current scheme.
+First, you'll need to create a new repository under the [faasm org](
+  https://github.com/faasm) following the pattern `experiment-<name>`.
+Then, the recommended approach is to copy one of the existing repositories, and
+see what you need to change.
+
+In particular, you will need to do the following:
+
+### Create Native and Faasm-compatible Dockerfiles
+
+Experiments require _all_ code to be containerized in Docker containers.
+For each experiment, you will need two different images: one for the native
+(baseline) execution of the vanilla source, and a second one for the `Faasm`
+compatible, WASM build.
+It is encouraged that you create the following structure under your root dir.
 
 ## Cluster Provisioning <a name="cluster-provisioning">
 
@@ -98,7 +115,7 @@ kubectl get nodes
 **Important: VM scale sets are EXPENSIVE. Make sure you delete the cluster once
 you are done with it.**
 
-We provide a set of convenient scripts to manage virtual machine (VM) clusters.
+We provide a set of convenience scripts to manage virtual machine (VM) clusters.
 You can may inspect the [source code](
   https://github.com/faasm/experiment-base/blob/master/az-vm/az_vms.sh).
 You will have to modify the sources if you want to change the VM type.
@@ -124,6 +141,8 @@ To install it, follow the instructions [here](
   https://microk8s.io/).
 Once done, test your deployment using:
 ```bash
+sudo microk8s status
+sudo microk8s start # if not started
 sudo microk8s kubectl get nodes
 ```
 

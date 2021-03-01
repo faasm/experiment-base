@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: faabric-experiments
+spec:
+  selector:
+    matchLabels:
+      run: faabric
+  replicas: 5
+  template:
+    metadata:
+      name: mpi-worker
+      labels:
+        run: faabric
+    spec:
+      containers:
+        - name: mpi-worker
+          image: ${IMAGE_NAME}
+          imagePullPolicy: IfNotPresent
+          #imagePullPolicy: Always
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: run
+                operator: In
+                values: 
+                - faabric
+            topologyKey: "kubernetes.io/hostname"

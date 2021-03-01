@@ -1,0 +1,46 @@
+---
+
+- name: "Copy private key"
+  become: yes
+  ansible.builtin.copy:
+    src: /code/experiment-kernels/ssh/id_rsa.mpi
+    remote_src: yes
+    dest: /home/faasm/.ssh/id_rsa
+    owner: faasm
+    group: faasm
+    mode: 'preserve'
+
+- name: "Change privkey's permissions"
+  become: yes
+  file:
+    path: /home/faasm/.ssh/id_rsa
+    owner: faasm
+    group: faasm
+    mode: '0600'
+
+- name: "Copy public key"
+  become: yes
+  ansible.builtin.copy:
+    src: /code/experiment-kernels/ssh/id_rsa.mpi.pub
+    remote_src: yes
+    dest: /home/faasm/.ssh/id_rsa.pub
+    owner: faasm
+    group: faasm
+    mode: 'preserve'
+
+- name: "Copy SSH config"
+  become: yes
+  ansible.builtin.copy:
+    src: /code/experiment-kernels/ssh/config
+    remote_src: yes
+    dest: /home/faasm/.ssh/config
+    owner: faasm
+    group: faasm
+    mode: 'preserve'
+
+- name: "Set authorized key"
+  become: yes
+  ansible.posix.authorized_key:
+    user: faasm
+    state: present
+    key: "{{ lookup('file', '~/experiments/experiment-kernels/ssh/id_rsa.mpi.pub') }}"

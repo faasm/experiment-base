@@ -1,0 +1,6 @@
+---
+
+- name: "Build PRK native"
+  shell: "./build/kernels.sh"
+  args:
+    chdir: "/code/experiment-kernels"
