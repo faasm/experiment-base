@@ -42,17 +42,17 @@ RUN chmod -R 600 ${HOME}/.ssh* && \
     chown -R ${USER}:${USER} ${HOME}/.ssh
 
 # Set up experiment base code and plotting tools
-RUN apt-get update
-RUN apt-get install -y \
-    python3-dev \
-    python3-pip \
-    python3-venv
-
-# Python set-up
-WORKDIR /experiments
-RUN git clone https://github.com/faasm/experiments experiment-base
-WORKDIR /experiments/experiment-base
-RUN pip3 install -r requirements.txt
+# RUN apt-get update
+# RUN apt-get install -y \
+    #     python3-dev \
+    #     python3-pip \
+    #     python3-venv
+# 
+# # Python set-up
+# WORKDIR /experiments
+# RUN git clone https://github.com/faasm/experiments experiment-base
+# WORKDIR /experiments/experiment-base
+# RUN pip3 install -r requirements.txt
 
 # Start the SSH server for reachability
 # WORKDIR ${HOME}

@@ -32,7 +32,8 @@ else
     MPI_MASTER=$(./az-vm/az_vms.sh ip | awk 'NR==3 {print $2}')
     export MPI_MASTER=${MPI_MASTER}
     echo "Chosen as master node w/ name: ${MPI_MASTER}"
-    scp hostfile faasm@${MPI_MASTER}:/code/experiment-kernels/hostfile
+    ssh faasm@${MPI_MASTER} "mkdir -p /home/mpirun"
+    scp hostfile faasm@${MPI_MASTER}:/home/mpirun/hostfile
 
     # Debug print and delete
     echo "Copying generated hostfile to master:"
@@ -41,3 +42,4 @@ else
 fi
 
 popd >> /dev/null
+

@@ -16,5 +16,5 @@ spec:
       containers:
         - name: mpi-worker
           image: ${IMAGE_NAME}
-          imagePullPolicy: IfNotPresent
-          #imagePullPolicy: Always
+          imagePullPolicy: Always
+          #imagePullPolicy: IfNotPresent

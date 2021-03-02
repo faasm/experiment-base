@@ -12,10 +12,10 @@ ROOT_DIR=/code/experiment-kernels
 CLUSTER_SIZE=5
 MPI_PROCS_PER_NODE=2
 echo "----------------------------------------"
-echo "      Kernels Native VM Benchmark       "
+echo "      ${EXPERIMENT} VM Benchmark        "
 echo "                                        "
 echo "Benchmark parameters:                   "
-echo "    - VM Cluster Size: ${CLUSTER_SIZE} "
+echo "    - VM Cluster Size: ${CLUSTER_SIZE}  "
 echo "    - Max. MPI processes per node: ${MPI_PROCS_PER_NODE}"
 echo "----------------------------------------"
 
@@ -40,7 +40,7 @@ echo "----------------------------------------"
 
 # Copy the run batch script just in case we have changed something (so that we
 # don't have to rebuild the image)
-scp ./run/all.py faasm@${MPI_MASTER}:/code/experiment-kernels/run/all.py
+scp ${RUN_SCRIPT} faasm@${MPI_MASTER}:/code/experiment-kernels/run/all.py
 
 # Run the benchmark at the master
 ssh faasm@${MPI_MASTER} "/code/experiment-kernels/run/all.py"
@@ -48,12 +48,8 @@ echo "----------------------------------------"
 
 # Grep the results
 mkdir -p ./results
-scp faasm@${MPI_MASTER}:kernels_native_k8s_line.dat \
-    ./results/kernels_native_vms_line.dat
+scp faasm@${MPI_MASTER}:results.dat \
+    ./results/${EXPERIMENT}.dat
 
 popd >> /dev/null
 
-# Plot them
-# pushd plot >> /dev/null
-# gnuplot lammps_native_k8s.gnuplot
-# popd >> /dev/null

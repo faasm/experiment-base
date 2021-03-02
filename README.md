@@ -17,9 +17,9 @@ This repository is the common entrypoint for all experiments in [faabric](
 
 | Name | Status | Results | Run Experiment |
 | --- | --- | --- | --- |
-| [LAMMPS](https://github.com/faasm/experiment-lammps) | :x: MPI Error | [Plots](https://github.com/faasm/experiment-lammps/plots/README.md) | [Instructions](https://github.com/faasm/experiment-lammps/README.md) |
-| [ParRes Kernels](https://github.com/faasm/experiment-kernels) | :heavy_check_mark: Waiting Plot Spec | [Plots](https://github.com/faasm/experiment-kernels/plots/README.md) | [Instructions](https://github.com/faasm/experiment-kernels/README.md) |
-| [PyWren](https://github.com/faasm/experiment-pywren) | :clock9: WIP | [Plots](https://github.com/faasm/experiment-pywren/plots/README.md) | [Instructions](https://github.com/faasm/experiment-pywren/README.md) |
+| [LAMMPS](https://github.com/faasm/experiment-lammps) | :x: MPI Error | [Plots](https://github.com/faasm/experiment-lammps/plots/README.md) | [Instructions](https://github.com/faasm/experiment-lammps/blob/master/README.md) |
+| [ParRes Kernels](https://github.com/faasm/experiment-kernels) | :heavy_check_mark: Waiting Plot Spec | [Plots](https://github.com/faasm/experiment-kernels/plots/README.md) | [Instructions](https://github.com/faasm/experiment-kernels/blob/master/README.md) |
+| [PyWren](https://github.com/faasm/experiment-pywren) | :clock9: WIP | [Plots](https://github.com/faasm/experiment-pywren/plots/README.md) | [Instructions](https://github.com/faasm/experiment-pywren/blob/master/README.md) |
 
 ## Quick Start <a name="quick-start">
 
@@ -64,8 +64,25 @@ First, you'll need to create a new repository under the [faasm org](
   https://github.com/faasm) following the pattern `experiment-<name>`.
 Then, the recommended approach is to copy one of the existing repositories, and
 see what you need to change.
+It is encouraged that you create the following structure under your root dir.
+```bash
+|-experiment-base/
+|-experiment-newname/
+|---README.md
+|---docker/
+|-----build/
+|-------newname.sh
+|-------newname_native.sh
+|-----experiment-newname.dockerfile
+|-----experiment-newname-native.dockerfile
+|---run/
+|-----all.sh
+|-----all_native.sh
 
-In particular, you will need to do the following:
+```
+
+In particular, in addition to an explanatory `README`, you will need to do the
+following:
 
 ### Create Native and Faasm-compatible Dockerfiles
 
@@ -73,7 +90,17 @@ Experiments require _all_ code to be containerized in Docker containers.
 For each experiment, you will need two different images: one for the native
 (baseline) execution of the vanilla source, and a second one for the `Faasm`
 compatible, WASM build.
-It is encouraged that you create the following structure under your root dir.
+
+It is desirable that, under the `docker` folder, you store both `.docerfile` and
+build scripts to build them.
+
+### Create benchmark scripts
+
+These scripts should live under the `run` directory and contain _all_ the logic
+for the experiments to be executed.
+In an MPI setting, this script will be scp-ed to the master and executed.
+As an artifact, it should generate a file at `/home/mpirun/results.dat`
+containing all execution information.
 
 ## Cluster Provisioning <a name="cluster-provisioning">
 

@@ -14,7 +14,11 @@ pushd ${PROJ_ROOT} >> /dev/null
 export DOCKER_BUILDKIT=1
 
 # Docker args
-NO_CACHE=$1
+if [ "$1" == "--no-cache" ]; then
+    NO_CACHE=$1
+else
+    NO_CACHE=""
+fi
 
 docker build \
     ${NO_CACHE} \
@@ -22,6 +26,10 @@ docker build \
     -f ${DOCKER_DIR}/${IMAGE_NAME}.dockerfile \
     --build-arg FORCE_RECREATE=$(date +%s) \
     ${PROJ_ROOT}
+
+if [ "${BASH_ARGV[0]}" == "--push" ]; then
+    docker push faasm/${IMAGE_NAME}:${VERSION}
+fi
 
 popd >> /dev/null
 
