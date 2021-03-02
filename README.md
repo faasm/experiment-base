@@ -17,9 +17,9 @@ This repository is the common entrypoint for all experiments in [faabric](
 
 | Name | Status | Results | Run Experiment |
 | --- | --- | --- | --- |
-| [LAMMPS](https://github.com/faasm/experiment-lammps) | :x: MPI Error | [Plots](https://github.com/faasm/experiment-lammps/plots/README.md) | [Instructions](https://github.com/faasm/experiment-lammps/blob/master/README.md) |
-| [ParRes Kernels](https://github.com/faasm/experiment-kernels) | :heavy_check_mark: Waiting Plot Spec | [Plots](https://github.com/faasm/experiment-kernels/plots/README.md) | [Instructions](https://github.com/faasm/experiment-kernels/blob/master/README.md) |
-| [PyWren](https://github.com/faasm/experiment-pywren) | :clock9: WIP | [Plots](https://github.com/faasm/experiment-pywren/plots/README.md) | [Instructions](https://github.com/faasm/experiment-pywren/blob/master/README.md) |
+| [LAMMPS](https://github.com/faasm/experiment-lammps) | :x: MPI Error | [Plots](https://github.com/faasm/experiment-base/blob/master/plots/README.md) | [Instructions](https://github.com/faasm/experiment-lammps/blob/master/README.md) |
+| [ParRes Kernels](https://github.com/faasm/experiment-kernels) | :heavy_check_mark: Waiting Plot Spec | [Plots](https://github.com/faasm/experiment-base/blob/master/plots/README.md) | [Instructions](https://github.com/faasm/experiment-kernels/blob/master/README.md) |
+| [PyWren](https://github.com/faasm/experiment-pywren) | :clock9: WIP | [Plots](https://github.com/faasm/experiment-master/blob/master/plots/README.md) | [Instructions](https://github.com/faasm/experiment-pywren/blob/master/README.md) |
 
 ## Quick Start <a name="quick-start">
 
