@@ -46,14 +46,12 @@ curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
 ```
 (we include it here to avoid checking the link in the general case).
 
-Then, you need to login to the LSDS cluster using the appropriate credentials.
+Then, you need to login to the cluster using the appropriate credentials.
 Note that, in general, you will first need someone to grant you access.
 ```
-az login # use IMP credentials
-az account set -s e594b650-46d3-4375-be21-2ea11e8ed741
+az login
+az account set -s <account ID>
 ```
-if any of the previous fails, open an issue in this repo and mention one of its
-maintainers.
 
 ## Creating a new experiment <a name="new-experiment">
 
@@ -61,51 +59,45 @@ When creating a new experiment from scratch, there are a few steps you need to
 take for seamless integration and automation with the current scheme.
 First, you'll need to create a new repository under the [faasm org](
   https://github.com/faasm) following the pattern `experiment-<name>`.
+
 Then, the recommended approach is to copy one of the existing repositories, and
 see what you need to change.
+
 It is encouraged that you create the following structure under your root dir.
 ```bash
 |-experiment-base/
 |-experiment-newname/
 |---README.md
-|---docker/
-|-----build/
-|-------newname.sh
-|-------newname_native.sh
-|-----experiment-newname.dockerfile
-|-----experiment-newname-native.dockerfile
+|---Dockerfile
+|---bin/
+|------build_native.sh
+|------build_faasm.sh
 |---run/
-|-----all.sh
-|-----all_native.sh
+|------faasm.sh
+|------native.sh
 
 ```
 
 In particular, in addition to an explanatory `README`, you will need to do the
 following:
 
-### Create Native and Faasm-compatible Dockerfiles
+### Create a Dockerfile
 
-Experiments require _all_ code to be containerized in Docker containers.
-For each experiment, you will need two different images: one for the native
-(baseline) execution of the vanilla source, and a second one for the `Faasm`
-compatible, WASM build.
-
-It is desirable that, under the `docker` folder, you store both `.docerfile` and
-build scripts to build them.
+Every experiment must be Dockerised using a Dockerfile.
 
 ### Create benchmark scripts
 
-These scripts should live under the `run` directory and contain _all_ the logic
-for the experiments to be executed.
+These scripts should live under the `run` directory and contain the logic for the 
+experiments to be executed.
+
 In an MPI setting, this script will be scp-ed to the master and executed.
 As an artifact, it should generate a file at `/home/mpirun/results.dat`
 containing all execution information.
 
 ## Cluster Provisioning <a name="cluster-provisioning">
 
-The cluster needs to be provisioned only once. 
-Check the Azure portal beforehand to see if everything is deployed before
-running any of the following.
+The cluster needs to be provisioned only once. See the [provisioning docs](docs/provisioning).
+
 If it is the first time you are interacting with Azure through the command
 line, make sure you've read the [first time users instructions](#first-time-users).
 
