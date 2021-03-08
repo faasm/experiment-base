@@ -2,6 +2,10 @@
 
 set -e
 
+# ---------- CHANGING VM SIZE ---------
+# Set the --vm-sku argument in any create statements
+# -------------------------------------
+
 THIS_DIR=$(dirname $(readlink -f $0))
 PROJ_DIR=${THIS_DIR}/..
 CLUSTER_NAME="faasmVMcluster"
