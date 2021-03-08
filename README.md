@@ -1,8 +1,7 @@
 # Experiments for Faabric Paper
 
 This repository is the common entrypoint for all experiments in [faabric](
-    https://github.com/faasm/faabric), as presented in the [paper](
-    https://github.com/faasm/faabric-paper).
+    https://github.com/faasm/faabric).
 
 ## Table of Contents
 
