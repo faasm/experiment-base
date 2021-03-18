@@ -23,7 +23,7 @@ az account set -s <account ID>
 
 You may need to be graned access first. 
 
-## Provisioning a Kubernetes Cluster with AKS
+## Provisioning a Kubernetes Cluster with AKS and Knative
 
 ```bash
 az aks create \
@@ -42,6 +42,11 @@ az aks get-credentials --resource-group faasm --name <myClusterName>
 
 # Check with kubectl
 kubectl get nodes
+```
+
+Faasm runs on `knative` to install a minimal version of it run:
+```
+inv knative.install
 ```
 
 ## Creating a VM Scale Set Cluster
