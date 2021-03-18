@@ -1,6 +1,6 @@
 import os
 from os.path import join
-from subprocess import call
+from subprocess import call, check_output
 
 from invoke import task
 
@@ -12,7 +12,6 @@ BARE_METAL_REMOTE_CONF = join(K8S_DIR, "bare-metal-remote")
 LOCAL_CONF = join(K8S_DIR, "local")
 COMMON_CONF = join(K8S_DIR, "common")
 
-# KNATIVE_VERSION = "0.13.0"
 KNATIVE_VERSION = "0.21.0"
 
 # Number of replicas in the Faasm worker pod
@@ -97,6 +96,21 @@ def _kubectl_apply(path, env=None):
 
 def _kubectl_delete(path, env=None):
     _kubectl_cmd(path, "delete", env=env)
+
+
+@task
+def get_service_ip(ctx, svc_ns="istio-system", svc_name="istio-ingressgateway"):
+    """
+    Get the service IP for a service namespace:name pair
+    """
+    cmd = "kubectl get -n {} service {} -ojsonpath='{{.status.loadBalancer.ingress[0].ip}}'".format(
+        svc_ns, svc_name
+    )
+
+    print(cmd)
+    ip = check_output(cmd, shell=True)
+
+    print(ip.decode("utf-8"))
 
 
 @task
