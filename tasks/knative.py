@@ -49,7 +49,7 @@ KNATIVE_ENV = {
     "REDIS_STATE_HOST": "redis-state",
     "REDIS_QUEUE_HOST": "redis-queue",
     "HOST_TYPE": "knative",
-    "LOG_LEVEL": "info",
+    "LOG_LEVEL": "debug", #change to info eventually
     "CGROUP_MODE": "off",
     "NETNS_MODE": "off",
     "STATE_MODE": "redis",

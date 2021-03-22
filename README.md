@@ -24,3 +24,7 @@ If creating a new experiment, see [the docs](docs/new_experiments.md).
 TODO: have a one-liner to run all the scripts prior to the artifact evaluation
 ```
 
+## To-Do
+
+* Script experiments to clone, build, and run them from the base repository.
+* Update docs to use invoke tasks
