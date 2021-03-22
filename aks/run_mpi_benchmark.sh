@@ -33,9 +33,10 @@ kubectl -n ${NAMESPACE} exec -it \
 echo "----------------------------------------"
 
 # Grep the results
-mkdir -p ./results
+EXPERIMENT_SHORT=$(echo $EXPERIMENT | cut -f1 -d"_" )
+mkdir -p ./results/${EXPERIMENT_SHORT}
 kubectl cp ${NAMESPACE}/${MPI_MASTER}:/home/mpirun/results.dat \
-    ./results/${EXPERIMENT}.dat
+    ./results/${EXPERIMENT_SHORT}/${EXPERIMENT}.dat
 
 # Delete leftovers
 kubectl -n ${NAMESPACE} exec -it \
