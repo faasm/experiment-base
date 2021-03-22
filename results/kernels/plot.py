@@ -82,7 +82,7 @@ def main():
         ax.bar(x, y, col_width)
 
     # Prepare legend
-    ax.legend(["{} MPI proc.".format(2**num) for num in range(num_procs)])
+    ax.legend(["{} MPI proc.".format(2 ** num) for num in range(num_procs)])
 
     # Aesthetics
     plt.hlines(1, xmin, xmax, linestyle="dashed", colors="red")
@@ -93,48 +93,8 @@ def main():
     ax.set_ylabel("Slowdown [faasm / native]")
     ax.set_title("Kernels time to completion slowdown Faasm vs Native")
     fig.tight_layout()
-    plt.savefig(OUT_FILE) 
+    plt.savefig(OUT_FILE)
 
 
 if __name__ == "__main__":
     main()
-        
-
-# labels = ["G1", "G2", "G3", "G4", "G5"]
-# men_means = [20, 34, 30, 35, 27]
-# women_means = [25, 32, 34, 20, 25]
-# 
-# x = np.arange(len(labels))  # the label locations
-# width = 0.35  # the width of the bars
-# 
-# rects1 = ax.bar(x - width / 2, men_means, width, label="Men")
-# rects2 = ax.bar(x + width / 2, women_means, width, label="Women")
-# 
-# # Add some text for labels, title and custom x-axis tick labels, etc.
-# ax.set_ylabel("Scores")
-# ax.set_title("Scores by group and gender")
-# ax.set_xticks(x)
-# ax.set_xticklabels(labels)
-# ax.legend()
-# 
-# 
-# def autolabel(rects):
-#     """Attach a text label above each bar in *rects*, displaying its height."""
-#     for rect in rects:
-#         height = rect.get_height()
-#         ax.annotate(
-#             "{}".format(height),
-#             xy=(rect.get_x() + rect.get_width() / 2, height),
-#             xytext=(0, 3),  # 3 points vertical offset
-#             textcoords="offset points",
-#             ha="center",
-#             va="bottom",
-#         )
-# 
-# 
-# autolabel(rects1)
-# autolabel(rects2)
-# 
-# fig.tight_layout()
-# 
-# plt.show()
