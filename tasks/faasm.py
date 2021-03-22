@@ -12,6 +12,13 @@ def get_faasm_invoke_host_port():
     return host, port
 
 
+def get_k8s_service_ip(namespace, service_name):
+    cmd = "kubectl get -n {} service {} -o 'jsonpath={{.status.loadBalancer.ingress[0].ip}}'".format(
+        namespace, service_name
+    )
+    return check_output(cmd, shell=True).decode("utf-8")
+
+
 def get_knative_headers(service_name):
     cmd = "kn service describe faasm-{} -o url -n faasm".format(service_name)
     url = check_output(cmd, shell=True).decode("utf-8").strip()[7:]

@@ -22,10 +22,3 @@ def do_post(url, input, headers=None, quiet=False, json=False, debug=False):
         print("Empty response")
 
     return response.text
-
-
-def get_k8s_service_ip(namespace, service_name):
-    cmd = "kubectl get -n {} service {} -o 'jsonpath={{.status.loadBalancer.ingress[0].ip}}'".format(
-        namespace, service_name
-    )
-    return check_output(cmd, shell=True).decode("utf-8")
