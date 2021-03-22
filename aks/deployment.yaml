@@ -17,8 +17,8 @@ spec:
       containers:
         - name: mpi-worker
           image: ${IMAGE_NAME}
-          imagePullPolicy: Always
-          #imagePullPolicy: IfNotPresent
+          imagePullPolicy: IfNotPresent
+          #imagePullPolicy: Always
       affinity:
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
