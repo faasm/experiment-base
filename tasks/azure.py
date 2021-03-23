@@ -6,6 +6,11 @@ from subprocess import check_output, run
 RESOURCE_GROUP = "faasm"
 LOCATION = "eastus"
 
+# Deployment default values
+STORAGE_SKU = "Standard_LRS"
+VM_STANDARD_SIZE = "Standard_DS2_v2"
+AKS_CLUSTER_NODE_COUNT = 5
+
 
 def _do_storage_account_get_key(name):
     _az_cmd = [
@@ -33,7 +38,7 @@ def storage_account_get_key(ctx, name):
 
 
 @task
-def storage_account_create(ctx, name, sku="Standard_LRS"):
+def storage_account_create(ctx, name, sku=STORAGE_SKU):
     """
     Create storage account
     """
@@ -110,7 +115,9 @@ def storage_container_delete(ctx, name):
 
 
 @task
-def aks_create_cluster(ctx, name, node_count=5, vm_size="Standard_DS2_v2"):
+def aks_create_cluster(
+    ctx, name, node_count=AKS_CLUSTER_NODE_COUNT, vm_size=VM_STANDARD_SIZE
+):
     """
     Create a k8s cluster with Azure's Kubernetes Service
     """
