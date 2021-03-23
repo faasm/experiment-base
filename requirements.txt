@@ -1,6 +1,6 @@
 # Local dependencies
 -e faasm/faasmcli
--e faasm/faasmcli/requirements.txt
+-r faasm/faasmcli/requirements.txt
 -e faasm/clients/cpp
 
 # External dependencies

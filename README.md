@@ -23,8 +23,16 @@ If creating a new experiment, see [the docs](docs/new_experiments.md).
 To run the experiments, first clone this repository and install the
 dependencies:
 ```bash
-git clone https://github.com/faasm/experiment-base --recurse-submodules
-./bin/here.sh
+# Clone repository and the necessary submodules
+git clone https://github.com/faasm/experiment-base
+cd experiment-base
+git submodule update --init
+cd faasm
+git submodule update --init client/cpp
+cd ..
+
+# Install the python dependencies
+source ./bin/here.sh
 pip3 install -U pip
 pip3 install -r requirements.txt
 ```
