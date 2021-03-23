@@ -46,7 +46,7 @@ kubectl get nodes
 
 Faasm runs on `knative` to install a minimal version of it run:
 ```
-inv knative.install
+inv faasm.knative.install
 ```
 
 ## Creating a VM Scale Set Cluster

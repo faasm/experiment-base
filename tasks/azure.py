@@ -6,6 +6,7 @@ from subprocess import check_output, run
 RESOURCE_GROUP = "faasm"
 LOCATION = "eastus"
 
+
 def _do_storage_account_get_key(name):
     _az_cmd = [
         "az",
@@ -21,6 +22,7 @@ def _do_storage_account_get_key(name):
     out = literal_eval(_out)[0]["value"]
     return out
 
+
 @task
 def storage_account_get_key(ctx, name):
     """
@@ -28,6 +30,7 @@ def storage_account_get_key(ctx, name):
     """
     key = _do_storage_account_get_key(name)
     print(key)
+
 
 @task
 def storage_account_create(ctx, name, sku="Standard_LRS"):
@@ -39,13 +42,14 @@ def storage_account_create(ctx, name, sku="Standard_LRS"):
         "storage account create",
         "--resource-group {}".format(RESOURCE_GROUP),
         "--name {}".format(name),
-        "--sku {}".format(sku)
+        "--sku {}".format(sku),
     ]
 
     az_cmd = " ".join(_az_cmd)
     print(az_cmd)
 
     run(az_cmd, shell=True, check=True)
+
 
 @task
 def storage_account_delete(ctx, name):
@@ -63,6 +67,7 @@ def storage_account_delete(ctx, name):
     print(az_cmd)
 
     run(az_cmd, shell=True, check=True)
+
 
 @task
 def storage_container_create(ctx, name):
@@ -83,6 +88,7 @@ def storage_container_create(ctx, name):
 
     run(az_cmd, shell=True, check=True)
 
+
 @task
 def storage_container_delete(ctx, name):
     """
@@ -102,6 +108,7 @@ def storage_container_delete(ctx, name):
 
     run(az_cmd, shell=True, check=True)
 
+
 @task
 def aks_create_cluster(ctx, name, node_count=5, vm_size="Standard_DS2_v2"):
     """
@@ -114,7 +121,7 @@ def aks_create_cluster(ctx, name, node_count=5, vm_size="Standard_DS2_v2"):
         "--name {}".format(name),
         "--node-count {}".format(node_count),
         "--node-vm-size {}".format(vm_size),
-        "--generate-ssh-keys" 
+        "--generate-ssh-keys",
     ]
 
     az_cmd = " ".join(_az_cmd)
@@ -139,7 +146,6 @@ def aks_get_credentials(ctx, name):
     print(az_cmd)
 
     run(az_cmd, shell=True, check=True)
-    
+
     print("kubectl get nodes")
     run("kubectl get nodes", shell=True, check=True)
-

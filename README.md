@@ -20,11 +20,15 @@ If creating a new experiment, see [the docs](docs/new_experiments.md).
 
 ## Quick Start
 
+To run the experiments, first clone this repository and install the
+dependencies:
+```bash
+git clone https://github.com/faasm/experiment-base --recurse-submodules
+./bin/here.sh
+pip3 install -U pip
+pip3 install -r requirements.txt
+```
+
 ```
 TODO: have a one-liner to run all the scripts prior to the artifact evaluation
 ```
-
-## To-Do
-
-* Script experiments to clone, build, and run them from the base repository.
-* Update docs to use invoke tasks

@@ -1,0 +1,20 @@
+name: Formatting Checks
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+    types: [opened, synchronize, reopened, ready_for_review]
+
+jobs:
+  formatting:
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      # --- Formatting checks ---
+      - name: "Install linters"
+        run: pip3 install black flake8
+      - name: "Python formatting check"
+        run: ./bin/check_python.sh

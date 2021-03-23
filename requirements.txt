@@ -1,3 +1,9 @@
+# Local dependencies
+-e faasm/faasmcli
+-e faasm/faasmcli/requirements.txt
+-e faasm/clients/cpp
+
+# External dependencies
 invoke
 matplotlib
 numpy
