@@ -14,7 +14,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       # --- Formatting checks ---
-      - name: "Install linters"
-        run: pip3 install black flake8
+      - name: "Install black"
+        run: pip3 install black
       - name: "Python formatting check"
         run: ./bin/check_python.sh
