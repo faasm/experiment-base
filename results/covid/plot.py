@@ -8,7 +8,11 @@ NATIVE_DATA_FILE = "covid_native.dat"
 FAASM_DATA_FILE = "covid_native.dat"
 OUT_FILE = "covid.png"
 
-test_data = {1: [10.883981, 10.776523000000001], 10: [27.986638, 27.214199999999998], 20: [49.723203999999996, 60.012849]}
+test_data = {
+    1: [10.883981, 10.776523000000001],
+    10: [27.986638, 27.214199999999998],
+    20: [49.723203999999996, 60.012849],
+}
 
 
 def _load_results():
@@ -24,9 +28,9 @@ def _do_avg(result_array):
 
 
 def _do_stdev(result_array):
-    sum_pow_2 = sum([x**2 for x in result_array])
+    sum_pow_2 = sum([x ** 2 for x in result_array])
     n = len(result_array)
-    return float(sum_pow_2/n) - pow(_do_avg(result_array), 2)
+    return float(sum_pow_2 / n) - pow(_do_avg(result_array), 2)
 
 
 def main():
@@ -52,7 +56,9 @@ def main():
     # Horizontal line indicating the absolute minimum we achieve w/ one machine
     plt.axhline(y=y_native_min, color="orange", linestyle="--")
     # Vertical lines every <cpu_count>
-    for _x in [ind for ind,val in enumerate(list(faasm_results.keys())) if int(val) % 20 == 0]:
+    for _x in [
+        ind for ind, val in enumerate(list(faasm_results.keys())) if int(val) % 20 == 0
+    ]:
         plt.axvline(x=_x, linestyle="dashed", color="gray")
     plt.xlim(xmin, xmax)
 
