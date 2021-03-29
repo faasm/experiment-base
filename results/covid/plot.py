@@ -1,26 +1,10 @@
 import json
-import matplotlib
 import matplotlib.pyplot as plt
-import numpy as np
-import sys
 
-NATIVE_DATA_FILE = "covid_native.dat"
-FAASM_DATA_FILE = "covid_native.dat"
+NATIVE_DATA_FILE = "covid_native.csv"
+FAASM_DATA_FILE = "covid_native.csv"
 OUT_FILE = "covid.png"
 
-test_data = {
-    1: [10.883981, 10.776523000000001],
-    10: [27.986638, 27.214199999999998],
-    20: [49.723203999999996, 60.012849],
-}
-
-
-def _load_results():
-    with open(NATIVE_DATA_FILE) as json_file:
-        native_results = json.load(json_file)
-    with open(FAASM_DATA_FILE) as json_file:
-        faasm_results = json.load(json_file)
-    return native_results, faasm_results
 
 
 def _do_avg(result_array):
@@ -34,6 +18,7 @@ def _do_stdev(result_array):
 
 
 def main():
+
     native_results, faasm_results = _load_results()
 
     # Define the independent variables

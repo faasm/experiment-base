@@ -4,6 +4,8 @@
 -e faasm/clients/cpp
 
 # External dependencies
+black
 invoke
 matplotlib
 numpy
+pandas
