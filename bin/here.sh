@@ -1,8 +1,6 @@
 #!/bin/bash
 
-set -e
-
-THIS_DIR=$(dirname -- "$(readlink -f  -- "$0")")
+THIS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 PROJ_ROOT=${THIS_DIR}/..
 
 pushd ${PROJ_ROOT} >> /dev/null
