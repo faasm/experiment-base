@@ -8,16 +8,24 @@ RESULTS_DIR = join(PROJ_ROOT, "results")
 
 
 @task
-def covid(ctx):
+def plot(ctx):
     """
     Plot the covid results
     """
     native_csv = join(RESULTS_DIR, "covid", "covid_native.csv")
-    native_df = pd.read_csv(native_csv)
+    results = pd.read_csv(native_csv)
 
     # Average over runs
-    native_df = native_df.groupby(["Threads"]).mean()
+    grouped = results.groupby("Threads")
+    times = grouped.mean()
+    errs = grouped.std()
 
     # Plot
-    native_df.plot.line(y="Time(s)")
+    times.plot.line(
+        y="Time(s)", yerr=errs, ecolor="gray", elinewidth=0.8, capsize=1.0
+    )
+
+    plt.title("CovidSim run time")
+    plt.legend(["Native"])
+    plt.ylabel("Time (s)")
     plt.show()

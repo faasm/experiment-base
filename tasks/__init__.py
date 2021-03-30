@@ -3,12 +3,12 @@ from invoke import Collection
 
 from . import azure
 from . import container
-from . import plot
+from . import covid
 
 ns = Collection(
     azure,
     container,
-    plot,
+    covid,
 )
 
 ns.add_collection(faasm_ns, name="faasm")
