@@ -1,4 +1,5 @@
-FROM faasm/grpc-root:0.0.16
+ARG FAASM_VERSION
+FROM faasm/cli:${FAASM_VERSION}
 
 # Download and install OpenMPI
 WORKDIR /tmp
