@@ -9,7 +9,7 @@ pushd ${PROJ_ROOT} >> /dev/null
 
 # Experiment variables
 CLUSTER_SIZE=5
-MPI_PROCS_PER_NODE=5
+MPI_PROCS_PER_NODE=2
 NAMESPACE="faabric"
 echo "----------------------------------------"
 echo "      ${EXPERIMENT} k8s Benchmark       "
