@@ -30,6 +30,7 @@ def _do_individual_plot(csv, label, ax):
 
     plt.title("{} CovidSim".format(label))
     plt.ylabel("Time (s)")
+    ax.set_ylim(bottom=0)
 
     return grouped, times, errs
 
@@ -57,6 +58,7 @@ def plot(ctx):
     wasm_times.plot.line(y="Total", yerr=wasm_errs, ecolor="gray", ax=ax)
     native_times.plot.line(y="Total", yerr=native_errs, ecolor="gray", ax=ax)
     plt.title("Combined")
+    ax.set_ylim(bottom=0)
 
     plt.tight_layout()
     plt.show()
