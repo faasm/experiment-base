@@ -4,6 +4,10 @@ from os.path import join
 import matplotlib.pyplot as plt
 import pandas as pd
 
+import matplotlib
+
+matplotlib.use("tkagg")
+
 RESULTS_DIR = join(PROJ_ROOT, "results")
 
 
@@ -20,9 +24,17 @@ def plot(ctx):
     times = grouped.mean()
     errs = grouped.std()
 
-    # Plot
+    # Plot all three times
     times.plot.line(
-        y="Time(s)", yerr=errs, ecolor="gray", elinewidth=0.8, capsize=1.0
+        y="Setup", yerr=errs, ecolor="gray", elinewidth=0.8, capsize=1.0
+    )
+
+    times.plot.line(
+        y="Execution", yerr=errs, ecolor="gray", elinewidth=0.8, capsize=1.0
+    )
+
+    times.plot.line(
+        y="Total", yerr=errs, ecolor="gray", elinewidth=0.8, capsize=1.0
     )
 
     plt.title("CovidSim run time")
