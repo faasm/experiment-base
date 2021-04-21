@@ -1,6 +1,6 @@
 from invoke import task
 from tasks.util.env import PROJ_ROOT
-from os.path import join
+from os.path import join, exists
 import matplotlib.pyplot as plt
 import pandas as pd
 
@@ -20,7 +20,7 @@ def _do_individual_plot(csv, label, ax):
     errs = grouped.std()
 
     times.plot.line(
-        y=["Setup", "Execution", "Total"],
+        y=["Setup", "Execution"],
         yerr=errs,
         ecolor="gray",
         elinewidth=0.8,
@@ -36,12 +36,20 @@ def _do_individual_plot(csv, label, ax):
 
 
 @task
-def plot(ctx):
+def plot(ctx, country="Guam"):
     """
     Plot the covid results
     """
-    native_csv = join(RESULTS_DIR, "covid", "covid_native.csv")
-    wasm_csv = join(RESULTS_DIR, "covid", "covid_wasm.csv")
+    native_csv = join(
+        RESULTS_DIR, "covid", "covid_native_{}.csv".format(country)
+    )
+    wasm_csv = join(RESULTS_DIR, "covid", "covid_wasm_{}.csv".format(country))
+
+    if not exists(native_csv):
+        raise RuntimeError("Native CSV not found: {}".format(native_csv))
+
+    if not exists(wasm_csv):
+        raise RuntimeError("Wasm CSV not found: {}".format(wasm_csv))
 
     ax = plt.subplot(311)
     native_grouped, native_times, native_errs = _do_individual_plot(
@@ -55,8 +63,10 @@ def plot(ctx):
 
     # Combined plot
     ax = plt.subplot(313)
-    wasm_times.plot.line(y="Total", yerr=wasm_errs, ecolor="gray", ax=ax)
-    native_times.plot.line(y="Total", yerr=native_errs, ecolor="gray", ax=ax)
+    wasm_times.plot.line(y="Execution", yerr=wasm_errs, ecolor="gray", ax=ax)
+    native_times.plot.line(
+        y="Execution", yerr=native_errs, ecolor="gray", ax=ax
+    )
     plt.title("Combined")
     ax.set_ylim(bottom=0)
 
