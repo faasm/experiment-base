@@ -3,7 +3,7 @@ from subprocess import run
 
 from invoke import task
 from tasks.util.env import PROJ_ROOT
-from tasks.util.version import get_version
+from tasks.util.version import get_version, get_faasm_version
 
 EXPERIMENT_BASE_IMAGE_NAME = "experiment-base"
 
@@ -15,7 +15,7 @@ def _get_docker_tag(img_name):
 
 def _do_container_build(name, nocache=False, push=False):
     tag_name = _get_docker_tag(name)
-    ver = get_version()
+    faasm_ver = get_faasm_version()
 
     if nocache:
         no_cache_str = "--no-cache"
@@ -29,6 +29,7 @@ def _do_container_build(name, nocache=False, push=False):
         no_cache_str,
         "-t {}".format(tag_name),
         "-f {}".format(dockerfile),
+        "--build-arg FAASM_VERSION={}".format(faasm_ver),
         ".",
     ]
     build_cmd = " ".join(build_cmd)
