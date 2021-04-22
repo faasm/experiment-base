@@ -39,7 +39,7 @@ def plot(ctx, country="Guam"):
     wasm_grouped, wasm_times, wasm_errs = read_results(wasm_csv)
 
     ax = plt.subplot(111)
-    
+
     wasm_times.plot.line(
         y="Execution",
         yerr=wasm_errs,
@@ -49,7 +49,7 @@ def plot(ctx, country="Guam"):
         ax=ax,
         label="Faasm",
     )
-   
+
     native_times.plot.line(
         y="Execution",
         yerr=native_errs,
