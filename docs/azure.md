@@ -1,60 +1,94 @@
-# Azure Configuration
+# Experiment setup with Azure
 
-## Commandline tools
+## Azure CLI
 
-You will need to set up the Azure client (`az`) as per the 
-[official instructions](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli).
+You will need to set up the Azure client (`az`) as per the [official
+instructions](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli).
 
-In Ubuntu this boils down to:
+In Ubuntu:
 
-```
+```bash
 curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
 ```
 
-You will also need `kubectl` as described [here](
-https://kubernetes.io/docs/tasks/tools/install-kubectl/).
-
-## Login
-
-```
-az login
-az account set -s <account ID>
-```
-
-You may need to be graned access first. 
-
-## Provisioning a Kubernetes Cluster with AKS and Knative
+Then run the Azure login:
 
 ```bash
-az aks create \
-  --resource-group faasm \
-  --name <myClusterName> \
-  --node-count <myClusterSize> \
-  --node-vm-size <vmSize> \ # Default: Standard_DS2_v2
-  --generate-ssh-keys 
+az login
 ```
 
-You can check with:
+On success, this returns some JSON with the details of your account(s). You need
+to pick the `id` field of the one you want, then:
 
-```
-# Check the cluster
-az aks get-credentials --resource-group faasm --name <myClusterName>
-
-# Check with kubectl
-kubectl get nodes
+```bash
+az account set -s <account_id>
 ```
 
-Faasm runs on `knative` to install a minimal version of it run:
+## K8s client `kubectl` and Knative client `kn`
+
+You also need to install the correct versions of `kubectl` and `kn`, which can
+be done using the tasks in this repo:
+
+```bash
+inv cluster.install-kubectl
+inv cluster.install-kn
 ```
+
+Check `kubectl` gives the right version with:
+
+```bash
+cat K8S_VERSION
+
+kubectl version
+```
+
+Check `kn` is working with:
+
+```bash
+kn version
+```
+
+Note that both are installed in the `bin` directory of this repo, and should be
+added to `PATH` via `source bin/workon.sh` as described in the main `README`.
+
+## Setting up Faasm on AKS
+
+This repo contains tasks to provision the underlying K8s cluster:
+
+```bash
+inv cluster.provision
+```
+
+Once set up, you can check the cluster and that `kubectl` commands work with:
+
+```bash
+inv cluster.details
+inv cluster.credentials
+```
+
+You then need to install Knative on this cluster with:
+
+```bash
 inv faasm.knative.install
+```
+
+From here you can follow the [Faasm k8s
+instructions](https://github.com/faasm/faasm/blob/master/docs/kubernetes.md).
+
+### Clearing up
+
+Once finished with the cluster, you can delete it with:
+
+```bash
+inv cluster.delete
 ```
 
 ## Creating a VM Scale Set Cluster
 
-**Important: VM scale sets are EXPENSIVE. Make sure you delete the cluster once
-you are done with it.**
+Note that these are only needed for running micro benchmarks.
 
 To bootstrap the cluster run:
+
 ```bash
 ./az-vm/az_vms.sh create <NUM_VMS>
 ```

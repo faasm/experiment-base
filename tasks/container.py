@@ -13,7 +13,7 @@ def _get_docker_tag(img_name):
     return "faasm/{}:{}".format(img_name, ver)
 
 
-def _do_container_build(name, nocache=False, push=False):
+def _build_container(name, nocache=False, push=False):
     tag_name = _get_docker_tag(name)
     faasm_ver = get_faasm_version()
 
@@ -38,10 +38,10 @@ def _do_container_build(name, nocache=False, push=False):
     run(build_cmd, shell=True, check=True, env={"DOCKER_BUILDKIT": "1"})
 
     if push:
-        _do_push(name)
+        push_image(name)
 
 
-def _do_push(name):
+def push_image(name):
     tag_name = _get_docker_tag(name)
 
     cmd = "docker push {}".format(tag_name)
@@ -54,7 +54,7 @@ def build(ctx, nocache=False, push=False):
     """
     Build current version of the base experiment container.
     """
-    _do_container_build(EXPERIMENT_BASE_IMAGE_NAME, nocache=nocache, push=push)
+    _build_container(EXPERIMENT_BASE_IMAGE_NAME, nocache=nocache, push=push)
 
 
 @task
@@ -62,4 +62,4 @@ def push(ctx):
     """
     Push current version of the base experiment container.
     """
-    _do_push(EXPERIMENT_BASE_IMAGE_NAME)
+    push_image(EXPERIMENT_BASE_IMAGE_NAME)

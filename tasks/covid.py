@@ -7,16 +7,14 @@ import pandas as pd
 
 import matplotlib
 
-matplotlib.use("tkagg")
-
 RESULTS_DIR = join(PROJ_ROOT, "results")
 
 
-def read_results(csv):
+def _read_results(csv):
     csv = join(RESULTS_DIR, "covid", csv)
 
     if not exists(csv):
-        raise RuntimeError("CSV not found: {}".format(native_csv))
+        raise RuntimeError("CSV not found: {}".format(csv))
 
     results = pd.read_csv(csv)
 
@@ -32,11 +30,13 @@ def plot(ctx, country="Guam"):
     """
     Plot the covid results
     """
+    matplotlib.use("tkagg")
+
     native_csv = "covid_native_{}.csv".format(country)
     wasm_csv = "covid_wasm_{}.csv".format(country)
 
-    native_grouped, native_times, native_errs = read_results(native_csv)
-    wasm_grouped, wasm_times, wasm_errs = read_results(wasm_csv)
+    native_grouped, native_times, native_errs = _read_results(native_csv)
+    wasm_grouped, wasm_times, wasm_errs = _read_results(wasm_csv)
 
     ax = plt.subplot(111)
 

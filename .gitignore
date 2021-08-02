@@ -1,28 +1,20 @@
-# Copied from: https://github.com/github/gitignore/blob/master/Python.gitignore
-# and removed what did not apply.
+# Deployment-specific binaries
+bin/kubectl
+bin/kn
+bin/kn-linux-amd64
 
-# Byte-compiled / optimized / DLL files
+# Virtualenv
+venv/
+
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
 
-# C extensions
 *.so
 
 *.egg-info/
 .installed.cfg
 *.egg
-
 __pypackages__/
 
-# Environments
-.env
-.venv
-env/
-venv/
-ENV/
-env.bak/
-venv.bak/
-
-# Cython debug symbols
-cython_debug/
