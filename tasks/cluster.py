@@ -11,7 +11,7 @@ from tasks.util.env import (
 # https://docs.microsoft.com/en-us/cli/azure/aks?view=azure-cli-latest
 
 
-def run_aks_cmd(name, az_args=None):
+def _run_aks_cmd(name, az_args=None):
     cmd = [
         "az",
         "aks {}".format(name),
@@ -31,7 +31,7 @@ def list(ctx):
     """
     List all AKS clusters
     """
-    run_aks_cmd("list")
+    _run_aks_cmd("list")
 
 
 @task
@@ -39,7 +39,7 @@ def provision(ctx):
     """
     Provision the cluster
     """
-    run_aks_cmd(
+    _run_aks_cmd(
         "create",
         [
             "--name {}".format(AKS_CLUSTER_NAME),
@@ -55,7 +55,7 @@ def details(ctx):
     """
     Show the details of the cluster
     """
-    run_aks_cmd(
+    _run_aks_cmd(
         "show",
         [
             "--name {}".format(AKS_CLUSTER_NAME),
@@ -68,7 +68,7 @@ def delete(ctx):
     """
     Delete the cluster
     """
-    run_aks_cmd(
+    _run_aks_cmd(
         "delete",
         [
             "--name {}".format(AKS_CLUSTER_NAME),
@@ -83,7 +83,7 @@ def credentials(ctx, name):
     Get credentials for the cluster
     """
     # Set up the credentials
-    run_aks_cmd("get-credentials", ["--name {}".format(name)])
+    _run_aks_cmd("get-credentials", ["--name {}".format(name)])
 
     # Check we can access the cluster
     print("kubectl get nodes")

@@ -8,13 +8,13 @@ from tasks.util.version import get_version, get_faasm_version
 EXPERIMENT_BASE_IMAGE_NAME = "experiment-base"
 
 
-def get_docker_tag(img_name):
+def _get_docker_tag(img_name):
     ver = get_version()
     return "faasm/{}:{}".format(img_name, ver)
 
 
-def build_container(name, nocache=False, push=False):
-    tag_name = get_docker_tag(name)
+def _build_container(name, nocache=False, push=False):
+    tag_name = _get_docker_tag(name)
     faasm_ver = get_faasm_version()
 
     if nocache:
@@ -42,7 +42,7 @@ def build_container(name, nocache=False, push=False):
 
 
 def push_image(name):
-    tag_name = get_docker_tag(name)
+    tag_name = _get_docker_tag(name)
 
     cmd = "docker push {}".format(tag_name)
     print(cmd)
@@ -54,7 +54,7 @@ def build(ctx, nocache=False, push=False):
     """
     Build current version of the base experiment container.
     """
-    build_container(EXPERIMENT_BASE_IMAGE_NAME, nocache=nocache, push=push)
+    _build_container(EXPERIMENT_BASE_IMAGE_NAME, nocache=nocache, push=push)
 
 
 @task

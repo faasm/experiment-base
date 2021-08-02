@@ -10,7 +10,7 @@ from tasks.util.env import (
 )
 
 
-def get_account_key(name):
+def _get_account_key(name):
     cmd = [
         "az",
         "storage account keys list",
@@ -21,8 +21,8 @@ def get_account_key(name):
     cmd = " ".join(cmd)
     print(cmd)
 
-    _out = check_output(cmd, shell=True).decode("utf-8")
-    out = literal_eval(_out)[0]["value"]
+    out = check_output(cmd, shell=True).decode("utf-8")
+    out = literal_eval(out)[0]["value"]
     return out
 
 
@@ -31,7 +31,7 @@ def account_key(ctx, name):
     """
     Get key to access the storage account
     """
-    key = get_account_key(name)
+    key = _get_account_key(name)
     print(key)
 
 
@@ -82,7 +82,7 @@ def create_container(ctx, name):
         "storage container create",
         "--resource-group {}".format(AZURE_RESOURCE_GROUP),
         "--account-name {}".format(name),
-        "--account-key {}".format(get_account_key(name)),
+        "--account-key {}".format(_get_account_key(name)),
         "--name storage",
     ]
 
@@ -102,7 +102,7 @@ def delete_container(ctx, name):
         "storage container delete",
         "--resource-group {}".format(AZURE_RESOURCE_GROUP),
         "--account-name {}".format(name),
-        "--account-key {}".format(get_account_key(name)),
+        "--account-key {}".format(_get_account_key(name)),
         "--name storage",
     ]
 
