@@ -2,8 +2,8 @@
 
 ## Commandline tools
 
-You will need to set up the Azure client (`az`) as per the 
-[official instructions](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli).
+You will need to set up the Azure client (`az`) as per the [official
+instructions](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli).
 
 In Ubuntu this boils down to:
 
@@ -16,35 +16,43 @@ https://kubernetes.io/docs/tasks/tools/install-kubectl/).
 
 ## Login
 
-```
-az login
-az account set -s <account ID>
-```
-
-You may need to be graned access first. 
-
-## Provisioning a Kubernetes Cluster with AKS and Knative
+First run the Azure login:
 
 ```bash
-az aks create \
-  --resource-group faasm \
-  --name <myClusterName> \
-  --node-count <myClusterSize> \
-  --node-vm-size <vmSize> \ # Default: Standard_DS2_v2
-  --generate-ssh-keys 
+az login
 ```
 
-You can check with:
+On success, this returns some JSON with the details of your account(s). You need
+to pick the `id` field of the one you want, then:
 
+```bash
+az account set -s <account_id>
 ```
+
+## Provisioning with AKS
+
+The [tutorial
+docs](https://docs.microsoft.com/en-us/azure/aks/tutorial-kubernetes-prepare-app)
+give an overview.
+
+This repo contains tasks to provision the cluster:
+
+```bash
+inv cluster.provision
+```
+
+Once set up, you can check with:
+
+```bash
 # Check the cluster
-az aks get-credentials --resource-group faasm --name <myClusterName>
+az aks get-credentials --resource-group faasm --name faasm-cluster
 
 # Check with kubectl
 kubectl get nodes
 ```
 
-Faasm runs on `knative` to install a minimal version of it run:
+You then need to install Knative with:
+
 ```
 inv faasm.knative.install
 ```
@@ -54,7 +62,10 @@ inv faasm.knative.install
 **Important: VM scale sets are EXPENSIVE. Make sure you delete the cluster once
 you are done with it.**
 
+Note that these are only needed for running micro benchmarks.
+
 To bootstrap the cluster run:
+
 ```bash
 ./az-vm/az_vms.sh create <NUM_VMS>
 ```
