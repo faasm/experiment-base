@@ -26,7 +26,7 @@ if [ "$(ps -o comm= -p $$)" = "zsh" ]; then
 fi
 complete -F _complete_invoke -o default invoke inv
 
-# Add this bin to the path for kubectl
+# Pick up project-specific binaries
 export PATH=${PROJ_ROOT}/bin:${PATH}
 
 export PS1="(faasm-exp) $PS1"
