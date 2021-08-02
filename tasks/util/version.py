@@ -2,31 +2,18 @@ from os.path import join
 
 from tasks.util.env import PROJ_ROOT, FAASM_DIR
 
-experiments_version = None
-faasm_version = None
+
+def _read_ver_file(file_path):
+    with open(file_path, "r") as fh:
+        ver = fh.read()
+        ver = ver.strip()
+
+    return ver
 
 
 def get_version():
-    global experiments_version
-
-    ver_file = join(PROJ_ROOT, "VERSION")
-
-    if not experiments_version:
-        with open(ver_file, "r") as fh:
-            experiments_version = fh.read()
-            experiments_version = experiments_version.strip()
-
-    return experiments_version
+    return _read_ver_file(join(PROJ_ROOT, "VERSION"))
 
 
 def get_faasm_version():
-    global faasm_version
-
-    ver_file = join(FAASM_DIR, "VERSION")
-
-    if not faasm_version:
-        with open(ver_file, "r") as fh:
-            faasm_version = fh.read()
-            faasm_version = faasm_version.strip()
-
-    return faasm_version
+    return _read_ver_file(join(FAASM_DIR, "VERSION"))
