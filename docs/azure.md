@@ -44,23 +44,23 @@ inv cluster.provision
 Once set up, you can check with:
 
 ```bash
-# Check the cluster
-az aks get-credentials --resource-group faasm --name faasm-cluster
-
-# Check with kubectl
-kubectl get nodes
+inv cluster.details
+inv cluster.credentials
 ```
 
 You then need to install Knative with:
 
-```
+```bash
 inv faasm.knative.install
 ```
 
-## Creating a VM Scale Set Cluster
+Once finished, you can delete with:
 
-**Important: VM scale sets are EXPENSIVE. Make sure you delete the cluster once
-you are done with it.**
+```bash
+inv cluster.delete
+```
+
+## Creating a VM Scale Set Cluster
 
 Note that these are only needed for running micro benchmarks.
 
