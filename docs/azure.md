@@ -100,15 +100,3 @@ To delete the cluster:
 ```bash
 ./az-vm/az_vms.sh delete
 ```
-
-## Creating a local microk8s cluster for development
-
-[Official instructions](https://microk8s.io/).
-
-Check with:
-
-```bash
-sudo microk8s status
-sudo microk8s start # if not started
-sudo microk8s kubectl get nodes
-```
