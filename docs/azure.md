@@ -1,22 +1,17 @@
-# Azure Configuration
+# Experiment setup with Azure
 
-## Commandline tools
+## Azure CLI
 
 You will need to set up the Azure client (`az`) as per the [official
 instructions](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli).
 
-In Ubuntu this boils down to:
+In Ubuntu:
 
-```
+```bash
 curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
 ```
 
-You will also need `kubectl` as described [here](
-https://kubernetes.io/docs/tasks/tools/install-kubectl/).
-
-## Login
-
-First run the Azure login:
+Then run the Azure login:
 
 ```bash
 az login
@@ -28,6 +23,28 @@ to pick the `id` field of the one you want, then:
 ```bash
 az account set -s <account_id>
 ```
+
+## Kubectl
+
+You also need to install the correct version of `kubectl` which can be done
+using the task in this repo:
+
+```bash
+inv cluster.install-kubectl
+```
+
+Or you can check [`K8S_VERSION`](../K8S_VERSION) and do it yourself.
+
+You then need to make sure that running `kubectl` from the shell gives the right
+version:
+
+```bash
+cat K8S_VERSION
+kubectl version
+```
+
+This should be the case if you've run `source bin/workon.sh` as described in
+the setup for this repo.
 
 ## Provisioning with AKS
 
@@ -41,7 +58,7 @@ This repo contains tasks to provision the cluster:
 inv cluster.provision
 ```
 
-Once set up, you can check with:
+Once set up, you can check the cluster and that `kubectl` commands work with:
 
 ```bash
 inv cluster.details

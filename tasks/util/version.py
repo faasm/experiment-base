@@ -17,3 +17,7 @@ def get_version():
 
 def get_faasm_version():
     return _read_ver_file(join(FAASM_DIR, "VERSION"))
+
+
+def get_k8s_version():
+    return _read_ver_file(join(PROJ_ROOT, "K8S_VERSION"))
