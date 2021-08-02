@@ -1,5 +1,7 @@
-# Installed kubectl
+# Deployment-specific binaries
 bin/kubectl
+bin/kn
+bin/kn-linux-amd64
 
 # Virtualenv
 venv/

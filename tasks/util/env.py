@@ -2,6 +2,7 @@ from os.path import dirname, realpath, join
 
 PROJ_ROOT = dirname(dirname(dirname(realpath(__file__))))
 FAASM_DIR = "{}/faasm".format(PROJ_ROOT)
+BIN_DIR = join(PROJ_ROOT, "bin")
 
 AZURE_RESOURCE_GROUP = "faasm"
 AZURE_REGION = "eastus"

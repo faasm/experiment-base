@@ -2,15 +2,19 @@ from invoke import task
 from os import makedirs
 from os.path import join
 from subprocess import run
-from tasks.util.version import get_k8s_version
+
+from faasmcli.tasks.knative import KNATIVE_VERSION
+
 from tasks.util.env import (
     PROJ_ROOT,
+    BIN_DIR,
     KUBECTL_BIN,
     AZURE_RESOURCE_GROUP,
     AZURE_VM_SIZE,
     AKS_CLUSTER_NODE_COUNT,
     AKS_CLUSTER_NAME,
 )
+from tasks.util.version import get_k8s_version
 
 # AKS commandline reference here:
 # https://docs.microsoft.com/en-us/cli/azure/aks?view=azure-cli-latest
@@ -104,16 +108,34 @@ def credentials(ctx):
     run(cmd, shell=True, check=True)
 
 
+def _download_binary(url, binary_name):
+    makedirs(BIN_DIR, exist_ok=True)
+    cmd = "curl -LO {}".format(url)
+    run(cmd, shell=True, check=True, cwd=BIN_DIR)
+    run("chmod +x {}".format(binary_name), shell=True, check=True, cwd=BIN_DIR)
+
+
 @task
 def install_kubectl(ctx):
-    kubectl_dir = join(PROJ_ROOT, "bin")
-    makedirs(kubectl_dir, exist_ok=True)
-
+    """
+    Installs the k8s CLI (kubectl)
+    """
     k8s_ver = get_k8s_version()
     url = "https://dl.k8s.io/release/v{}/bin/linux/amd64/kubectl".format(
         k8s_ver
     )
+    _download_binary(url, "kubectl")
 
-    cmd = "curl -LO {}".format(url)
-    run(cmd, shell=True, check=True, cwd=kubectl_dir)
-    run("chmod +x kubectl", shell=True, check=True, cwd=kubectl_dir)
+
+@task
+def install_kn(ctx):
+    """
+    Installs the knative CLI (kn)
+    """
+    url = "https://github.com/knative/client/releases/download/v{}/kn-linux-amd64".format(
+        KNATIVE_VERSION
+    )
+    _download_binary(url, "kn-linux-amd64")
+
+    # Symlink for kn command
+    run("ln -s kn-linux-amd64 kn", shell=True, check=True, cwd=BIN_DIR)

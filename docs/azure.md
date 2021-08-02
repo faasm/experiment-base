@@ -24,35 +24,36 @@ to pick the `id` field of the one you want, then:
 az account set -s <account_id>
 ```
 
-## Kubectl
+## K8s client `kubectl` and Knative client `kn`
 
-You also need to install the correct version of `kubectl` which can be done
-using the task in this repo:
+You also need to install the correct versions of `kubectl` and `kn`, which can
+be done using the tasks in this repo:
 
 ```bash
 inv cluster.install-kubectl
+inv cluster.install-kn
 ```
 
-Or you can check [`K8S_VERSION`](../K8S_VERSION) and do it yourself.
-
-You then need to make sure that running `kubectl` from the shell gives the right
-version:
+Check `kubectl` gives the right version with:
 
 ```bash
 cat K8S_VERSION
+
 kubectl version
 ```
 
-This should be the case if you've run `source bin/workon.sh` as described in
-the setup for this repo.
+Check `kn` is working with:
 
-## Provisioning with AKS
+```bash
+kn version
+```
 
-The [tutorial
-docs](https://docs.microsoft.com/en-us/azure/aks/tutorial-kubernetes-prepare-app)
-give an overview.
+Note that both are installed in the `bin` directory of this repo, and should be
+added to `PATH` via `source bin/workon.sh` as described in the main `README`.
 
-This repo contains tasks to provision the cluster:
+## Setting up Faasm on AKS
+
+This repo contains tasks to provision the underlying K8s cluster:
 
 ```bash
 inv cluster.provision
@@ -65,13 +66,18 @@ inv cluster.details
 inv cluster.credentials
 ```
 
-You then need to install Knative with:
+You then need to install Knative on this cluster with:
 
 ```bash
 inv faasm.knative.install
 ```
 
-Once finished, you can delete with:
+From here you can follow the [Faasm k8s
+instructions](https://github.com/faasm/faasm/blob/master/docs/kubernetes.md).
+
+### Clearing up
+
+Once finished with the cluster, you can delete it with:
 
 ```bash
 inv cluster.delete
