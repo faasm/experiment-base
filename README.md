@@ -7,9 +7,10 @@ This repo contains the shared infrastructure for experiments related to
 More info:
 
 - [Azure setup](docs/azure.md).
+- [Local setup](docs/local.md).
 - [Setting up new experiments](docs/new_experiments.md).
 
-Experiment repos:
+Each experiment repo contains information on how to run that experiment:
 
 - [LAMMPS](https://github.com/faasm/experiment-lammps)
 - [ParRes Kernels](https://github.com/faasm/experiment-kernels)
