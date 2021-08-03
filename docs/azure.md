@@ -66,12 +66,6 @@ inv cluster.details
 inv cluster.credentials
 ```
 
-You then need to install Knative on this cluster with:
-
-```bash
-inv faasm.knative.install
-```
-
 From here you can follow the [Faasm k8s
 instructions](https://github.com/faasm/faasm/blob/master/docs/kubernetes.md).
 
