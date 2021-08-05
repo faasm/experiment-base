@@ -11,7 +11,7 @@ RESULTS_DIR = join(PROJ_ROOT, "results", "lammps")
 
 
 def _read_results(csv):
-    csv = join(RESULTS_DIR, "covid", csv)
+    csv = join(RESULTS_DIR, csv)
 
     if not exists(csv):
         raise RuntimeError("CSV not found: {}".format(csv))
