@@ -4,15 +4,11 @@
 
 [Official instructions](https://microk8s.io/).
 
-Make sure you install the same version you'll be running the experiments on.
-This has to be the 1.xx version shown in the `K8S_VERSION` file:
+We have to install the same version we'll be running the experiments on. This
+can be done with:
 
 ```bash
-cat K8S_VERSION
-
-K8S_MAJOR=<1.xx here>
-
-sudo snap install microk8s --classic --channel=${K8S_MAJOR}/stable
+./bin/install_microk8s.sh
 ```
 
 Check with:
@@ -30,3 +26,11 @@ instructions](https://github.com/faasm/faasm/blob/master/docs/kubernetes.md).
 Be careful to also add any instructions in there that are specific to MicroK8s
 (e.g. installing `istio`, setting up `kubectl`).
 
+### Resetting
+
+The quickest way to completely reset the cluster is:
+
+```bash
+sudo snap remove microk8s
+./bin/install_microk8s.sh
+```
