@@ -1,1 +1,0 @@
-# ParRes Kernels Evaluation
