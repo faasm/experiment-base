@@ -1,15 +1,12 @@
 [submodule "faasm"]
 	path = faasm
 	url = git@github.com:faasm/faasm.git
-[submodule "experiments/kernels"]
-	path = experiments/kernels
-	url = https://github.com/faasm/experiment-kernels
 [submodule "experiments/covid"]
 	path = experiments/covid
 	url = https://github.com/faasm/experiment-covid
 [submodule "experiments/pywren"]
 	path = experiments/pywren
 	url = https://github.com/faasm/experiment-pywren
-[submodule "experiments/lammps"]
-	path = experiments/lammps
-	url = https://github.com/faasm/experiment-lammps
+[submodule "experiments/mpi"]
+	path = experiments/mpi
+	url = git@github.com:faasm/experiment-mpi.git
