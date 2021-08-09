@@ -24,33 +24,6 @@ to pick the `id` field of the one you want, then:
 az account set -s <account_id>
 ```
 
-## K8s client `kubectl` and Knative client `kn`
-
-You also need to install the correct versions of `kubectl` and `kn`, which can
-be done using the tasks in this repo:
-
-```bash
-inv cluster.install-kubectl
-inv cluster.install-kn
-```
-
-Check `kubectl` gives the right version with:
-
-```bash
-cat K8S_VERSION
-
-kubectl version
-```
-
-Check `kn` is working with:
-
-```bash
-kn version
-```
-
-Note that both are installed in the `bin` directory of this repo, and should be
-added to `PATH` via `source bin/workon.sh` as described in the main `README`.
-
 ## Setting up Faasm on AKS
 
 This repo contains tasks to provision the underlying K8s cluster:

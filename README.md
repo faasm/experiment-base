@@ -19,8 +19,6 @@ Each experiment repo contains information on how to run that experiment:
 
 ## Setup
 
-To set up this repo:
-
 ```bash
 git submodule update --init
 cd faasm
@@ -34,4 +32,35 @@ pip3 install -r requirements.txt
 
 # List available tasks
 inv -l
+```
+You also need to install the correct versions of `kubectl` and `kn`, which can
+be done using the tasks in this repo:
+
+```bash
+inv cluster.install-kubectl
+inv cluster.install-kn
+```
+
+Check `kubectl` gives the right version with:
+
+```bash
+cat K8S_VERSION
+
+kubectl version
+```
+
+Check `kn` is working with:
+
+```bash
+kn version
+```
+
+Note that both are installed in the `bin` directory of this repo, and should be
+added to `PATH` via `source bin/workon.sh` as described in the main `README`.
+To set up this repo:
+
+You can optionally install [`k9s`](https://github.com/derailed/k9s) with:
+
+```bash
+inv cluster.install-k9s
 ```
