@@ -1,12 +1,12 @@
 from invoke import task
-from os import makedirs
 from os.path import join
+from os import makedirs, remove
+from shutil import copy, rmtree
 from subprocess import run
 
 from faasmcli.tasks.knative import KNATIVE_VERSION
 
 from tasks.util.env import (
-    PROJ_ROOT,
     BIN_DIR,
     KUBECTL_BIN,
     AZURE_RESOURCE_GROUP,
@@ -18,6 +18,8 @@ from tasks.util.version import get_k8s_version
 
 # AKS commandline reference here:
 # https://docs.microsoft.com/en-us/cli/azure/aks?view=azure-cli-latest
+
+K9S_VERSION = "0.24.15"
 
 
 def _run_aks_cmd(name, az_args=None):
@@ -139,3 +141,30 @@ def install_kn(ctx):
 
     # Symlink for kn command
     run("ln -s kn-linux-amd64 kn", shell=True, check=True, cwd=BIN_DIR)
+
+
+@task
+def install_k9s(ctx):
+    """
+    Installs the K9s CLI
+    """
+    tar_name = "k9s_Linux_x86_64.tar.gz"
+    url = "https://github.com/derailed/k9s/releases/download/v{}/{}".format(
+        K9S_VERSION, tar_name
+    )
+
+    # Download the TAR
+    workdir = "/tmp/k9s"
+    makedirs(workdir, exist_ok=True)
+
+    cmd = "curl -LO {}".format(url)
+    run(cmd, shell=True, check=True, cwd=workdir)
+
+    # Untar
+    run("tar -xf {}".format(tar_name), shell=True, check=True, cwd=workdir)
+
+    # Copy k9s into place
+    copy(join(workdir, "k9s"), join(BIN_DIR, "k9s"))
+
+    # Remove tar
+    rmtree(workdir)

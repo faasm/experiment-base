@@ -2,14 +2,14 @@ from faasmcli.tasks import ns as faasm_ns
 from invoke import Collection
 
 from . import cluster
-from . import container
 from . import covid
+from . import lammps
 from . import storage
 
 ns = Collection(
     cluster,
-    container,
     covid,
+    lammps,
     storage,
 )
 

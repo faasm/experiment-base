@@ -2,6 +2,7 @@
 bin/kubectl
 bin/kn
 bin/kn-linux-amd64
+bin/k9s
 
 # Virtualenv
 venv/

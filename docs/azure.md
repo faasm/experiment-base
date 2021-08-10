@@ -24,33 +24,6 @@ to pick the `id` field of the one you want, then:
 az account set -s <account_id>
 ```
 
-## K8s client `kubectl` and Knative client `kn`
-
-You also need to install the correct versions of `kubectl` and `kn`, which can
-be done using the tasks in this repo:
-
-```bash
-inv cluster.install-kubectl
-inv cluster.install-kn
-```
-
-Check `kubectl` gives the right version with:
-
-```bash
-cat K8S_VERSION
-
-kubectl version
-```
-
-Check `kn` is working with:
-
-```bash
-kn version
-```
-
-Note that both are installed in the `bin` directory of this repo, and should be
-added to `PATH` via `source bin/workon.sh` as described in the main `README`.
-
 ## Setting up Faasm on AKS
 
 This repo contains tasks to provision the underlying K8s cluster:
@@ -64,12 +37,6 @@ Once set up, you can check the cluster and that `kubectl` commands work with:
 ```bash
 inv cluster.details
 inv cluster.credentials
-```
-
-You then need to install Knative on this cluster with:
-
-```bash
-inv faasm.knative.install
 ```
 
 From here you can follow the [Faasm k8s
@@ -99,16 +66,4 @@ To delete the cluster:
 
 ```bash
 ./az-vm/az_vms.sh delete
-```
-
-## Creating a local microk8s cluster for development
-
-[Official instructions](https://microk8s.io/).
-
-Check with:
-
-```bash
-sudo microk8s status
-sudo microk8s start # if not started
-sudo microk8s kubectl get nodes
 ```
