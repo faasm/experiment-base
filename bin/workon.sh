@@ -5,12 +5,17 @@ PROJ_ROOT=${THIS_DIR}/..
 
 pushd ${PROJ_ROOT} >> /dev/null
 
-if [ ! -d "venv" ]; then
-    python3 -m venv venv
-fi
-
 export VIRTUAL_ENV_DISABLE_PROMPT=1
-source venv/bin/activate
+
+if [ ! -d "venv" ]; then
+    echo "Setting up venv at $(pwd)/venv"
+    python3 -m venv venv
+    source venv/bin/activate
+    pip3 install -U pip
+    pip3 install -r requirements.txt
+else
+    source venv/bin/activate
+fi
 
 # Invoke tab-completion
 _complete_invoke() {
