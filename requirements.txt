@@ -4,4 +4,4 @@
 -e faasm/clients/cpp
 
 # External dependencies (not included in requirements for faasmcli)
-hoststats==0.0.5
+hoststats==0.0.6
