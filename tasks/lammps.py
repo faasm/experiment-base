@@ -93,7 +93,7 @@ def plot_resources(ctx, world_size, run=0, gui=False):
 
     native_stats = HostStatsResults(native_file)
     wasm_stats = HostStatsResults(wasm_file)
-    
+
     makedirs(PLOTS_ROOT, exist_ok=True)
     plot_file = join(PLOTS_DIR, "resources.png")
 
@@ -113,14 +113,20 @@ def plot_resources(ctx, world_size, run=0, gui=False):
     plot_hoststats_resource(ax, native_stats, wasm_stats, "NET_SENT_MB", "MB")
 
     plt.tight_layout()
-    
+
     if gui:
         plt.show()
     else:
         plt.savefig(plot_file, format=PLOTS_FORMAT)
 
 
-def plot_hoststats_resource(ax, native_stats: HostStatsResults, wasm_stats: HostStatsResults, stat, y_label):
+def plot_hoststats_resource(
+    ax,
+    native_stats: HostStatsResults,
+    wasm_stats: HostStatsResults,
+    stat,
+    y_label,
+):
     plt.title("{}".format(stat))
 
     wasm_series = wasm_stats.get_median_stat(stat)
