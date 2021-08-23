@@ -11,4 +11,3 @@ ns = Collection(
     lammps,
     storage,
 )
-
