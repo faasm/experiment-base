@@ -16,9 +16,6 @@ how to run it:
 - [MPI (LAMMPS and ParRes Kernels)](experiments/mpi/README.md)
 - [OpenMP (Covid)](experiments/covid/README.md)
 
-Info adding a new experiment to this list can be found
-[here](docs/new_experiments.md).
-
 ## Setup
 
 ```bash
