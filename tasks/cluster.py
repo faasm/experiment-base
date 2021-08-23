@@ -1,10 +1,8 @@
 from invoke import task
 from os.path import join
-from os import makedirs, remove
+from os import makedirs
 from shutil import copy, rmtree
 from subprocess import run
-
-from faasmcli.tasks.knative import KNATIVE_VERSION
 
 from tasks.util.env import (
     BIN_DIR,
@@ -16,12 +14,13 @@ from tasks.util.env import (
 )
 from tasks.util.version import get_k8s_version
 
-# AKS commandline reference here:
-# https://docs.microsoft.com/en-us/cli/azure/aks?view=azure-cli-latest
-
+# Note - this must match the version used by Faasm
+KNATIVE_VERSION = "0.21.0"
 K9S_VERSION = "0.24.15"
 
 
+# AKS commandline reference here:
+# https://docs.microsoft.com/en-us/cli/azure/aks?view=azure-cli-latest
 def _run_aks_cmd(name, az_args=None):
     cmd = [
         "az",

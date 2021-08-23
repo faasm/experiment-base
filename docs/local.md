@@ -21,7 +21,8 @@ sudo microk8s start
 ```
 
 From here you can follow the [Faasm k8s
-instructions](https://github.com/faasm/faasm/blob/master/docs/kubernetes.md).
+instructions](https://github.com/faasm/faasm/blob/master/docs/kubernetes.md) to
+set up Faasm in the cluster.
 
 Be careful to also add any instructions in there that are specific to MicroK8s
 (e.g. installing `istio`, setting up `kubectl`).
@@ -31,6 +32,5 @@ Be careful to also add any instructions in there that are specific to MicroK8s
 The quickest way to completely reset the cluster is:
 
 ```bash
-sudo snap remove microk8s
-./bin/install_microk8s.sh
+sudo snap remove microk8s && ./bin/install_microk8s.sh
 ```

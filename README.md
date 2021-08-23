@@ -4,18 +4,17 @@ This repo contains the shared infrastructure for experiments related to
 [Faasm](http://github.com/faasm/faasm) and
 [Faabric](https://github.com/faasm/faabric).
 
-More info:
+To run all the experiments, you'll need to set up a Kubernetes cluster in a
+cloud provider or locally:
 
-- [Azure setup](docs/azure.md).
-- [Local setup](docs/local.md).
-- [Setting up new experiments](docs/new_experiments.md).
+- [Azure cluster setup](docs/azure.md).
+- [Local cluster setup](docs/local.md).
 
-Each experiment repo contains information on how to run that experiment:
+Once you have a cluster, each experiment repo contains specific information on
+how to run it:
 
-- [LAMMPS](https://github.com/faasm/experiment-lammps)
-- [ParRes Kernels](https://github.com/faasm/experiment-kernels)
-- [PyWren](https://github.com/faasm/experiment-pywren)
-- [Covid](https://github.com/faasm/experiment-covid)
+- [MPI (LAMMPS and ParRes Kernels)](experiments/mpi/README.md)
+- [OpenMP (Covid)](experiments/covid/README.md)
 
 ## Setup
 
@@ -33,6 +32,7 @@ pip3 install -r requirements.txt
 # List available tasks
 inv -l
 ```
+
 You also need to install the correct versions of `kubectl` and `kn`, which can
 be done using the tasks in this repo:
 
@@ -46,21 +46,27 @@ Check `kubectl` gives the right version with:
 ```bash
 cat K8S_VERSION
 
-kubectl version
+which kubectl
+
+kubectl version --client
 ```
 
 Check `kn` is working with:
 
 ```bash
+which kn
+
 kn version
 ```
 
-Note that both are installed in the `bin` directory of this repo, and should be
-added to `PATH` via `source bin/workon.sh` as described in the main `README`.
-To set up this repo:
+Note that both are installed in the `bin` directory of this repo, and should
+automatically be added to `PATH` via `source bin/workon.sh`.
 
-You can optionally install [`k9s`](https://github.com/derailed/k9s) with:
+You can optionally install [`k9s`](https://github.com/derailed/k9s) (for a nicer
+`kubectl` experience) with:
 
 ```bash
 inv cluster.install-k9s
+
+which k9s
 ```

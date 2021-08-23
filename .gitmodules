@@ -1,6 +1,3 @@
-[submodule "faasm"]
-	path = faasm
-	url = git@github.com:faasm/faasm.git
 [submodule "experiments/covid"]
 	path = experiments/covid
 	url = https://github.com/faasm/experiment-covid
