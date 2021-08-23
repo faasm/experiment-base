@@ -1,4 +1,3 @@
-from faasmcli.tasks import ns as faasm_ns
 from invoke import Collection
 
 from . import cluster
@@ -13,4 +12,3 @@ ns = Collection(
     storage,
 )
 
-ns.add_collection(faasm_ns, name="faasm")
