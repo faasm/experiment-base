@@ -47,12 +47,12 @@ Once set up, you need to configure `kubectl` with:
 inv cluster.credentials
 ```
 
-To check it's all worked:
+Then you need to set up `istioctl` and install Istio:
 
 ```bash
-kubectl get nodes
+inv cluster.install-istioctl
 
-inv cluster.details
+inv cluster.install-istio
 ```
 
 From here you can follow the [Faasm k8s

@@ -15,7 +15,8 @@ from tasks.util.env import (
 from tasks.util.version import get_k8s_version
 
 # Note - this must match the version used by Faasm
-KNATIVE_VERSION = "0.21.0"
+KNATIVE_VERSION = "0.25.0"
+ISTIO_VERSION = "1.9.5"
 K9S_VERSION = "0.24.15"
 
 
@@ -117,9 +118,48 @@ def _download_binary(url, binary_name):
 
 
 @task
+def install_istioctl(ctx):
+    """
+    Install istio CLI (istioctl)
+    """
+    tar_name = "istioctl-{}-linux-amd64.tar.gz".format(ISTIO_VERSION)
+    url = "https://github.com/istio/istio/releases/download/{}/{}".format(
+        ISTIO_VERSION, tar_name
+    )
+
+    working_dir = "/tmp/istio"
+    makedirs(working_dir, exist_ok=True)
+
+    cmd = "curl -LO {}".format(url)
+    run(cmd, shell=True, check=True, cwd=working_dir)
+
+    # Extract
+    run("tar -xf {}".format(tar_name), shell=True, check=True, cwd=working_dir)
+
+    # Copy into place
+    run(
+        "mv istioctl {}".format(BIN_DIR),
+        shell=True,
+        check=True,
+        cwd=working_dir,
+    )
+
+    # Nuke the working directory
+    rmtree(working_dir)
+
+
+@task
+def install_istio(ctx):
+    """
+    Install istio
+    """
+    run("istioctl install", shell=True, check=True)
+
+
+@task
 def install_kubectl(ctx):
     """
-    Installs the k8s CLI (kubectl)
+    Install the k8s CLI (kubectl)
     """
     k8s_ver = get_k8s_version()
     url = "https://dl.k8s.io/release/v{}/bin/linux/amd64/kubectl".format(
@@ -131,7 +171,7 @@ def install_kubectl(ctx):
 @task
 def install_kn(ctx):
     """
-    Installs the knative CLI (kn)
+    Install the knative CLI (kn)
     """
     url = "https://github.com/knative/client/releases/download/v{}/kn-linux-amd64".format(
         KNATIVE_VERSION
@@ -145,7 +185,7 @@ def install_kn(ctx):
 @task
 def install_k9s(ctx):
     """
-    Installs the K9s CLI
+    Install the K9s CLI
     """
     tar_name = "k9s_Linux_x86_64.tar.gz"
     url = "https://github.com/derailed/k9s/releases/download/v{}/{}".format(

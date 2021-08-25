@@ -14,6 +14,6 @@ AZURE_STORAGE_SKU = "Standard_LRS"
 AZURE_VM_SIZE = "Standard_DS2_v2"
 
 AKS_CLUSTER_NAME = "faasm-cluster"
-AKS_CLUSTER_NODE_COUNT = 2
+AKS_CLUSTER_NODE_COUNT = 4
 
 KUBECTL_BIN = join(PROJ_ROOT, "bin", "kubectl")

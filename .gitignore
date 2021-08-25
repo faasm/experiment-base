@@ -1,4 +1,5 @@
 # Deployment-specific binaries
+bin/istioctl
 bin/kubectl
 bin/kn
 bin/kn-linux-amd64
