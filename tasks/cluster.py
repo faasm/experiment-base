@@ -1,11 +1,13 @@
 from invoke import task
-from os.path import join
+from os.path import join, exists
 from os import makedirs
 from shutil import copy, rmtree
 from subprocess import run
 
 from tasks.util.env import (
+    PROJ_ROOT,
     BIN_DIR,
+    GLOBAL_BIN_DIR,
     KUBECTL_BIN,
     AZURE_RESOURCE_GROUP,
     AZURE_VM_SIZE,
@@ -101,6 +103,7 @@ def credentials(ctx):
         "get-credentials",
         [
             "--name {}".format(AKS_CLUSTER_NAME),
+            "--overwrite-existing",
         ],
     )
 
@@ -115,6 +118,27 @@ def _download_binary(url, binary_name):
     cmd = "curl -LO {}".format(url)
     run(cmd, shell=True, check=True, cwd=BIN_DIR)
     run("chmod +x {}".format(binary_name), shell=True, check=True, cwd=BIN_DIR)
+
+    return join(BIN_DIR, binary_name)
+
+
+def _symlink_global_bin(binary_path, name):
+    global_path = join(GLOBAL_BIN_DIR, name)
+    if exists(global_path):
+        print("Removing existing binary at {}".format(global_path))
+        run(
+            "sudo rm -f {}".format(global_path),
+            shell=True,
+            check=True,
+        )
+
+    print("Symlinking {} -> {}".format(global_path, binary_path))
+    run(
+        "sudo ln -s {} {}".format(binary_path, name),
+        shell=True,
+        check=True,
+        cwd=GLOBAL_BIN_DIR,
+    )
 
 
 @task
@@ -153,11 +177,15 @@ def install_istio(ctx):
     """
     Install istio
     """
-    run("istioctl install", shell=True, check=True)
+    istio_template = join(PROJ_ROOT, "k8s", "istio.yml")
+    cmd = "istioctl install -f {}".format(istio_template)
+    print(cmd)
+
+    run(cmd, shell=True, check=True)
 
 
 @task
-def install_kubectl(ctx):
+def install_kubectl(ctx, system=False):
     """
     Install the k8s CLI (kubectl)
     """
@@ -165,21 +193,31 @@ def install_kubectl(ctx):
     url = "https://dl.k8s.io/release/v{}/bin/linux/amd64/kubectl".format(
         k8s_ver
     )
-    _download_binary(url, "kubectl")
+
+    binary_path = _download_binary(url, "kubectl")
+
+    # Symlink for kubectl globally
+    if system:
+        _symlink_global_bin(binary_path, "kubectl")
 
 
 @task
-def install_kn(ctx):
+def install_kn(ctx, system=False):
     """
     Install the knative CLI (kn)
     """
     url = "https://github.com/knative/client/releases/download/v{}/kn-linux-amd64".format(
         KNATIVE_VERSION
     )
-    _download_binary(url, "kn-linux-amd64")
+    binary_path = _download_binary(url, "kn-linux-amd64")
 
-    # Symlink for kn command
-    run("ln -s kn-linux-amd64 kn", shell=True, check=True, cwd=BIN_DIR)
+    # Symlink for kn command locally
+    run("rm -f kn", shell=True, check=True, cwd=BIN_DIR)
+    run("ln -s {} kn".format(binary_path), shell=True, check=True, cwd=BIN_DIR)
+
+    # Symlink for kn command globally
+    if system:
+        _symlink_global_bin(binary_path, "kn")
 
 
 @task

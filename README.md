@@ -37,8 +37,13 @@ You also need to install the correct versions of `kubectl` and `kn`, which can
 be done using the tasks in this repo:
 
 ```bash
+# Only local to this repo's tasks
 inv cluster.install-kubectl
 inv cluster.install-kn
+
+# Globally (may prompt for sudo password)
+inv cluster.install-kubectl --system
+inv cluster.install-kn --system
 ```
 
 Check `kubectl` gives the right version with:

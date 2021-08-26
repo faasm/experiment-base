@@ -47,14 +47,6 @@ Once set up, you need to configure `kubectl` with:
 inv cluster.credentials
 ```
 
-Then you need to set up `istioctl` and install Istio:
-
-```bash
-inv cluster.install-istioctl
-
-inv cluster.install-istio
-```
-
 From here you can follow the [Faasm k8s
 instructions](https://github.com/faasm/faasm/blob/master/docs/kubernetes.md).
 
