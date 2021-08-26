@@ -24,8 +24,7 @@ From here you can follow the [Faasm k8s
 instructions](https://github.com/faasm/faasm/blob/master/docs/kubernetes.md) to
 set up Faasm in the cluster.
 
-Be careful to also add any instructions in there that are specific to MicroK8s
-(e.g. installing `istio`, setting up `kubectl`).
+Be careful to also add any instructions in there that are specific to MicroK8s.
 
 ### Resetting
 

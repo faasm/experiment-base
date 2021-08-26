@@ -18,7 +18,6 @@ from tasks.util.version import get_k8s_version
 
 # Note - this must match the version used by Faasm
 KNATIVE_VERSION = "0.25.0"
-ISTIO_VERSION = "1.9.5"
 K9S_VERSION = "0.24.15"
 
 
@@ -139,49 +138,6 @@ def _symlink_global_bin(binary_path, name):
         check=True,
         cwd=GLOBAL_BIN_DIR,
     )
-
-
-@task
-def install_istioctl(ctx):
-    """
-    Install istio CLI (istioctl)
-    """
-    tar_name = "istioctl-{}-linux-amd64.tar.gz".format(ISTIO_VERSION)
-    url = "https://github.com/istio/istio/releases/download/{}/{}".format(
-        ISTIO_VERSION, tar_name
-    )
-
-    working_dir = "/tmp/istio"
-    makedirs(working_dir, exist_ok=True)
-
-    cmd = "curl -LO {}".format(url)
-    run(cmd, shell=True, check=True, cwd=working_dir)
-
-    # Extract
-    run("tar -xf {}".format(tar_name), shell=True, check=True, cwd=working_dir)
-
-    # Copy into place
-    run(
-        "mv istioctl {}".format(BIN_DIR),
-        shell=True,
-        check=True,
-        cwd=working_dir,
-    )
-
-    # Nuke the working directory
-    rmtree(working_dir)
-
-
-@task
-def install_istio(ctx):
-    """
-    Install istio
-    """
-    istio_template = join(PROJ_ROOT, "k8s", "istio.yml")
-    cmd = "istioctl install -f {}".format(istio_template)
-    print(cmd)
-
-    run(cmd, shell=True, check=True)
 
 
 @task
