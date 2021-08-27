@@ -1,5 +1,14 @@
 # Experiment setup with Azure
 
+## Links
+
+Here are some docs that may be useful when dealing with AKS:
+
+- [Commandline
+  reference](https://docs.microsoft.com/en-us/cli/azure/aks?view=azure-cli-latest)
+- [AKS load
+  balancers](https://docs.microsoft.com/en-us/azure/aks/load-balancer-standard)
+
 ## Azure CLI
 
 You will need to set up the Azure client (`az`) as per the [official
@@ -24,23 +33,23 @@ to pick the `id` field of the one you want, then:
 az account set -s <account_id>
 ```
 
-## Setting up Faasm on AKS
+## Setting up a k8s cluster on Azure
 
-This repo contains tasks to provision the underlying K8s cluster:
+Provision the cluster with:
 
 ```bash
 inv cluster.provision
 ```
 
-Once set up, you can check the cluster and that `kubectl` commands work with:
+Once set up, you need to configure `kubectl` with:
 
 ```bash
-inv cluster.details
 inv cluster.credentials
 ```
 
 From here you can follow the [Faasm k8s
-instructions](https://github.com/faasm/faasm/blob/master/docs/kubernetes.md).
+instructions](https://github.com/faasm/faasm/blob/master/docs/kubernetes.md)
+from a normal Faasm checkout.
 
 ### Clearing up
 
