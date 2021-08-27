@@ -177,7 +177,7 @@ def install_kn(ctx, system=False):
 
 
 @task
-def install_k9s(ctx):
+def install_k9s(ctx, system=False):
     """
     Install the K9s CLI
     """
@@ -197,7 +197,12 @@ def install_k9s(ctx):
     run("tar -xf {}".format(tar_name), shell=True, check=True, cwd=workdir)
 
     # Copy k9s into place
-    copy(join(workdir, "k9s"), join(BIN_DIR, "k9s"))
+    binary_path = join(BIN_DIR, "k9s")
+    copy(join(workdir, "k9s"), binary_path)
 
     # Remove tar
     rmtree(workdir)
+
+    # Symlink for k9s command globally
+    if system:
+        _symlink_global_bin(binary_path, "k9s")

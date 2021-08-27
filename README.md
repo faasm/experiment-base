@@ -37,14 +37,13 @@ You also need to install the correct versions of `kubectl` and `kn`, which can
 be done using the tasks in this repo:
 
 ```bash
-# Only local to this repo's tasks
-inv cluster.install-kubectl
-inv cluster.install-kn
-
-# Globally (may prompt for sudo password)
 inv cluster.install-kubectl --system
 inv cluster.install-kn --system
 ```
+
+Note that this will place the `kubectl` and `kn` binaries into `/usr/local/bin`,
+to be available globally. If you just want to use the installs with the tasks in
+this repo, you can drop the `system` flag.
 
 Check `kubectl` gives the right version with:
 
@@ -64,14 +63,12 @@ which kn
 kn version
 ```
 
-Note that both are installed in the `bin` directory of this repo, and should
-automatically be added to `PATH` via `source bin/workon.sh`.
-
-You can optionally install [`k9s`](https://github.com/derailed/k9s) (for a nicer
-`kubectl` experience) with:
+It's highly advices that you install [`k9s`](https://github.com/derailed/k9s)
+too, as it makes managing the cluster much easier than running `kubectl` all the
+time.
 
 ```bash
-inv cluster.install-k9s
+inv cluster.install-k9s --system
 
 which k9s
 ```
