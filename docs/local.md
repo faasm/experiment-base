@@ -20,6 +20,20 @@ sudo microk8s status
 sudo microk8s start
 ```
 
+To run `kubectl` do:
+
+```bash
+rm -rf ~/.kube
+mkdir -p ~/.kube
+microk8s config > ~/.kube/config
+```
+
+Finally check with:
+
+```bash
+kubectl get nodes
+```
+
 From here you can follow the [Faasm k8s
 instructions](https://github.com/faasm/faasm/blob/master/docs/kubernetes.md) to
 set up Faasm in the cluster.

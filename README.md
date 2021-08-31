@@ -13,16 +13,13 @@ cloud provider or locally:
 Once you have a cluster, each experiment repo contains specific information on
 how to run it:
 
-- [MPI (LAMMPS and ParRes Kernels)](experiments/mpi/README.md)
-- [OpenMP (Covid)](experiments/covid/README.md)
+- [MPI (LAMMPS and ParRes Kernels)](https://github.com/faasm/experiment-mpi/blob/master/README.md)
+- [OpenMP (Covid)](https://github.com/faasm/experiment-covid)
 
 ## Setup
 
 ```bash
 git submodule update --init
-cd faasm
-git submodule update --init clients/cpp
-cd ..
 
 # Install the python dependencies
 source bin/workon.sh
