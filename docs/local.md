@@ -20,18 +20,10 @@ sudo microk8s status
 sudo microk8s start
 ```
 
-To run `kubectl` do:
+Lastly, update the credentials for `kubectl` to point to the microk8s cluster:
 
 ```bash
-rm -rf ~/.kube
-mkdir -p ~/.kube
-microk8s config > ~/.kube/config
-```
-
-Finally check with:
-
-```bash
-kubectl get nodes
+inv uk8s.credentials
 ```
 
 From here you can follow the [Faasm k8s
