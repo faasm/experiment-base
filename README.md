@@ -14,7 +14,7 @@ Once you have a cluster, each experiment repo contains specific information on
 how to run it:
 
 - [MPI (LAMMPS and ParRes Kernels)](https://github.com/faasm/experiment-mpi/blob/master/README.md)
-- [OpenMP (Covid)](https://github.com/faasm/experiment-covid)
+- [OpenMP (Covid)](https://github.com/faasm/experiment-covid/blob/master/README.md)
 
 ## Setup
 
