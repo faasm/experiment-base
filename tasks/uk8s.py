@@ -1,7 +1,29 @@
 from invoke import task
 from subprocess import run
 
-from tasks.util.env import KUBECTL_BIN
+from tasks.util.env import (
+    KUBECTL_BIN,
+    PROJ_ROOT,
+)
+
+
+@task
+def reset(ctx):
+    """
+    Reset the uk8s cluster from scratch
+    """
+    # Delete existing .kube config directory
+    rm_cmd = "sudo snap remove microk8s"
+    print(rm_cmd)
+    run(rm_cmd, shell=True, check=True)
+
+    # Create new .kube config directory
+    install_cmd = "./bin/install_microk8s.sh"
+    print(install_cmd)
+    run(install_cmd, cwd=PROJ_ROOT, shell=True, check=True)
+
+    # Update credentials
+    credentials(ctx)
 
 
 @task

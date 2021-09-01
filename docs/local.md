@@ -37,5 +37,5 @@ Be careful to also add any instructions in there that are specific to MicroK8s.
 The quickest way to completely reset the cluster is:
 
 ```bash
-sudo snap remove microk8s && ./bin/install_microk8s.sh
+inv uk8s.reset
 ```
