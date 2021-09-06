@@ -9,4 +9,6 @@ echo "Installing microk8s version ${K8S_MAJOR}"
 
 sudo snap install microk8s --classic --channel=${K8S_MAJOR}/stable
 
-sudo microk8s.enable istio
+# 31/08/21 - Disabling istio as otherwise the installation through Faasm's
+# "inv knative.install" fails
+# sudo microk8s.enable istio

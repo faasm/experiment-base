@@ -20,6 +20,12 @@ sudo microk8s status
 sudo microk8s start
 ```
 
+Lastly, update the credentials for `kubectl` to point to the microk8s cluster:
+
+```bash
+inv uk8s.credentials
+```
+
 From here you can follow the [Faasm k8s
 instructions](https://github.com/faasm/faasm/blob/master/docs/kubernetes.md) to
 set up Faasm in the cluster.
@@ -31,5 +37,5 @@ Be careful to also add any instructions in there that are specific to MicroK8s.
 The quickest way to completely reset the cluster is:
 
 ```bash
-sudo snap remove microk8s && ./bin/install_microk8s.sh
+inv uk8s.reset
 ```

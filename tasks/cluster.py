@@ -49,7 +49,7 @@ def list(ctx):
 @task
 def provision(ctx):
     """
-    Provision the cluster
+    Provision the AKS cluster
     """
     k8s_ver = get_k8s_version()
 
@@ -81,7 +81,7 @@ def details(ctx):
 @task
 def delete(ctx):
     """
-    Delete the cluster
+    Delete the AKS cluster
     """
     _run_aks_cmd(
         "delete",
@@ -95,7 +95,7 @@ def delete(ctx):
 @task
 def credentials(ctx):
     """
-    Get credentials for the cluster
+    Get credentials for the AKS cluster
     """
     # Set up the credentials
     _run_aks_cmd(
