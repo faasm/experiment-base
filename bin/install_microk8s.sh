@@ -9,6 +9,7 @@ echo "Installing microk8s version ${K8S_MAJOR}"
 
 sudo snap install microk8s --classic --channel=${K8S_MAJOR}/stable
 
-# 31/08/21 - Disabling istio as otherwise the installation through Faasm's
-# "inv knative.install" fails
-# sudo microk8s.enable istio
+# Enable add-ons required by faasm/ knative
+sudo microk8s enable dns
+sudo microk8s enable rbac
+sudo microk8s enable metallb:192.168.1.240/24

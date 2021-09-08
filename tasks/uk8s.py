@@ -8,16 +8,24 @@ from tasks.util.env import (
 
 
 @task
-def reset(ctx):
+def uninstall(ctx):
     """
-    Reset the uk8s cluster from scratch
+    Uninstall uk8s
     """
-    # Delete existing .kube config directory
     rm_cmd = "sudo snap remove microk8s"
     print(rm_cmd)
     run(rm_cmd, shell=True, check=True)
 
-    # Create new .kube config directory
+
+@task
+def reset(ctx):
+    """
+    Reset the uk8s cluster from scratch
+    """
+    # Uninstall the existing
+    uninstall(ctx)
+
+    # Install
     install_cmd = "./bin/install_microk8s.sh"
     print(install_cmd)
     run(install_cmd, cwd=PROJ_ROOT, shell=True, check=True)

@@ -5,7 +5,6 @@ from shutil import copy, rmtree
 from subprocess import run
 
 from tasks.util.env import (
-    PROJ_ROOT,
     BIN_DIR,
     GLOBAL_BIN_DIR,
     KUBECTL_BIN,
@@ -17,7 +16,7 @@ from tasks.util.env import (
 from tasks.util.version import get_k8s_version
 
 # Note - this must match the version used by Faasm
-KNATIVE_VERSION = "0.25.0"
+KNATIVE_VERSION = "0.24.0"
 K9S_VERSION = "0.24.15"
 
 
