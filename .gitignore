@@ -5,9 +5,12 @@ bin/kn-linux-amd64
 bin/k9s
 
 # Plots and results
-# Safe to ignore only when experiments are robust enoguh
+# LAMMPS experiment is robust enough to ignore these files
 plots/lammps
 results/lammps
+# Kernels results can also be ignored
+plots/kernels
+results/kernels
 
 # Virtualenv
 venv/
