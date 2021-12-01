@@ -10,3 +10,6 @@
 [submodule "experiments/microbench"]
 	path = experiments/microbench
 	url = https://github.com/faasm/experiment-microbench.git
+[submodule "experiments/sgx"]
+	path = experiments/sgx
+	url = git@github.com:faasm/experiment-sgx.git

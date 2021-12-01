@@ -1,5 +1,0 @@
-Kernel,WorldSize,Run,StatName,StatValue
-nstream,1,0,Avg time (s),0.00298700
-nstream,1,0,Rate (MB/s),21428.69818300
-nstream,2,0,Avg time (s),0.00162100
-nstream,2,0,Rate (MB/s),39483.21408200
