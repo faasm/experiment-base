@@ -1,4 +1,4 @@
-from os import makedirs
+from os import makedirs, sysconf, sysconf_names
 from os.path import join, exists, expanduser
 
 from math import sqrt
@@ -18,6 +18,26 @@ PLOTS_DIR = join(PLOTS_ROOT, "lammps")
 
 BENCHMARKS = ["compute", "network"]
 PLOT_COORDS = [0, 1]
+
+# Each tuple in the list contains (1) the resource name in the hoststats result
+# object, the unit to display in the Y axis, and whether the measure is an
+# accumulated value or not.
+ALL_RESOURCES = [
+    ["CPU_PCT", "%", False],
+    [
+        "CPU_TIME_IOWAIT",
+        "1/{} sec".format(sysconf(sysconf_names["SC_CLK_TCK"])),
+        True,
+    ],
+    [
+        "CPU_TIME_IDLE",
+        "1/{} sec".format(sysconf(sysconf_names["SC_CLK_TCK"])),
+        True,
+    ],
+    ["MEMORY_USED_PCT", "%", False],
+    ["DISK_READ_MB", "MB", True],
+    ["NET_SENT_MB", "MB", True],
+]
 
 
 def _read_results(csv):
@@ -140,10 +160,11 @@ def plot(ctx, gui=False, plot_elapsed_times=True):
                 alpha=0.3,
             )
             ax_et.set_ylabel("Elapsed time [s]")
+            ax_et.set_ylim(bottom=0)
 
         ax[coords].title.set_text("{}-bound benchmark".format(bench))
         ax[coords].set_ylim(bottom=0)
-        ax[coords].set_xlim(left=1)
+        ax[coords].set_xlim(left=0)
         ax[coords].set_xlabel("MPI World Size")
         ax[coords].set_ylabel("Speed Up (vs 1 MPI Proc performance)")
 
@@ -205,22 +226,148 @@ def plot_resources(ctx, world_size, run=0, gui=False):
         plt.savefig(plot_file, format=PLOTS_FORMAT)
 
 
+@task
+def resources_cmp_runs(ctx, bench, run_one, run_two, run=0, gui=False):
+    """
+    Compare the resource usage of two runs of the same benchmark identified by
+    their world size.
+    """
+    fig = plt.figure(figsize=(16, 8))
+    outer = gridspec.GridSpec(2, 1)
+
+    makedirs(PLOTS_ROOT, exist_ok=True)
+    plot_file = join(
+        PLOTS_DIR, "resources_{}_{}vs{}.png".format(bench, run_one, run_two)
+    )
+
+    for num, world_size in enumerate([int(run_one), int(run_two)]):
+        # Set the outer frame for a single run
+        ax = plt.Subplot(fig, outer[num], frameon=False, xticks=[], yticks=[])
+        ax.set_title(
+            "MPI World Size: {}".format(world_size), fontweight="bold", y=1.1
+        )
+        fig.add_subplot(ax)
+
+        # Set the inner grid for all resources in a single run
+        inner = gridspec.GridSpecFromSubplotSpec(
+            1,
+            len(ALL_RESOURCES),
+            subplot_spec=outer[num],
+            wspace=0.4,
+            hspace=0,
+        )
+
+        plot_single_run(plt, fig, inner, bench, world_size)
+
+    plt.tight_layout()
+    plt.suptitle("")
+
+    if gui:
+        plt.show()
+    else:
+        plt.savefig(plot_file, format=PLOTS_FORMAT)
+
+
+def plot_single_run(plt, fig, grid, bench, world_size, run=0):
+    native_file = join(
+        RESULTS_DIR,
+        "hoststats_native_{}_{}_{}.csv".format(bench, world_size, run),
+    )
+    wasm_file = join(
+        RESULTS_DIR,
+        "hoststats_wasm_{}_{}_{}.csv".format(bench, world_size, run),
+    )
+
+    try:
+        native_stats = HostStatsResults(native_file)
+    except RuntimeError:
+        print("native stats file not found")
+        return
+    try:
+        wasm_stats = HostStatsResults(wasm_file)
+    except RuntimeError:
+        print("wasm stats file not found")
+        return
+
+    for index, tup in enumerate(ALL_RESOURCES):
+        resource = tup[0]
+        unit = tup[1]
+        is_acc = tup[2]
+
+        ax = plt.Subplot(fig, grid[index])
+        plot_hoststats_resource(
+            ax, native_stats, wasm_stats, resource, unit, is_acc, per_host=True
+        )
+
+        # Plot legend only on the first run
+        if index == 0:
+            handles, labels = ax.get_legend_handles_labels()
+            fig.legend(handles, labels)
+
+        fig.add_subplot(ax)
+
+
 def plot_hoststats_resource(
     ax,
     native_stats: HostStatsResults,
     wasm_stats: HostStatsResults,
     stat,
     y_label,
+    is_acc,
+    per_host=False,
 ):
     ax.set_title("{}".format(stat), fontsize="small")
 
-    wasm_series = wasm_stats.get_median_stat(stat)
-    wasm_series.index = wasm_series.index.total_seconds()
-    wasm_series.plot(ax=ax, label="Faasm")
+    if per_host:
+        wasm_series_per_host = wasm_stats.get_stat_per_host(stat)
+        for host in wasm_series_per_host:
+            if is_acc:
+                ax.plot(
+                    wasm_series_per_host[host]["Timestamp"].dt.total_seconds(),
+                    wasm_series_per_host[host][stat].diff(),
+                    label=host.split("-")[-1],
+                )
+                continue
 
-    native_series = native_stats.get_median_stat(stat)
-    native_series.index = native_series.index.total_seconds()
-    native_series.plot(ax=ax, label="OpenMPI")
+            ax.plot(
+                wasm_series_per_host[host]["Timestamp"].dt.total_seconds(),
+                wasm_series_per_host[host][stat],
+                label=host.split("-")[-1],
+            )
+
+        native_series_per_host = native_stats.get_stat_per_host(stat)
+        for host in native_series_per_host:
+            if is_acc:
+                ax.plot(
+                    native_series_per_host[host][
+                        "Timestamp"
+                    ].dt.total_seconds(),
+                    native_series_per_host[host][stat].diff(),
+                    label=host.split("-")[-1],
+                    ls="--",
+                )
+                continue
+
+            ax.plot(
+                native_series_per_host[host]["Timestamp"].dt.total_seconds(),
+                native_series_per_host[host][stat],
+                label=host.split("-")[-1],
+                ls="--",
+            )
+    else:
+        if is_acc:
+            wasm_series = wasm_stats.get_median_stat(stat).diff()
+        else:
+            wasm_series = wasm_stats.get_median_stat(stat)
+        wasm_series.index = wasm_series.index.total_seconds()
+        wasm_series.plot(ax=ax, label="Faasm")
+
+        if is_acc:
+            native_series = native_stats.get_median_stat(stat).diff()
+        else:
+            native_series = native_stats.get_median_stat(stat)
+        native_series.index = native_series.index.total_seconds()
+        native_series.plot(ax=ax, label="OpenMPI")
 
     ax.set_ylim(bottom=0)
     ax.set_xlim(left=0)
