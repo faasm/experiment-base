@@ -19,7 +19,7 @@ PLOTS_DIR = join(PLOTS_ROOT, "lammps")
 BENCHMARKS = ["compute", "network"]
 PLOT_COORDS = [0, 1]
 
-# Each tuple in the list contains (1) the resource name in the hoststats result
+# Each tuple in the list contains the resource name in the hoststats result
 # object, the unit to display in the Y axis, and whether the measure is an
 # accumulated value or not.
 ALL_RESOURCES = [

@@ -21,7 +21,7 @@ def _run_kubectl_cmd(args):
 @task
 def ssh_node(ctx, node):
     """
-    Get an SSH shell in a node in the pool
+    Get an SSH shell in a node in the AKS cluster node pool
     """
     cmd = [
         "debug",
