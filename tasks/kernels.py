@@ -1,4 +1,5 @@
 from invoke import task
+from math import sqrt
 from os import makedirs
 from os.path import join, exists
 
@@ -28,8 +29,10 @@ def _read_results(csv):
     # Second, group by world size
     result_dict = {}
     for name, group in results:
-        # TODO - how do we present errors in a slowdown plot?
-        result_dict[name] = group.groupby("WorldSize", as_index=False).mean()
+        result_dict[name] = [
+            group.groupby("WorldSize", as_index=False).mean(),
+            group.groupby("WorldSize", as_index=False).sem(),
+        ]
 
     return result_dict
 
@@ -52,18 +55,50 @@ def _check_results(native_results, wasm_results):
     # If the experiments run with different number of processes, error out
     for key in native_results.keys():
         if (
-            native_results[key]["WorldSize"].count()
-            != wasm_results[key]["WorldSize"].count()
+            native_results[key][0]["WorldSize"].count()
+            != wasm_results[key][0]["WorldSize"].count()
         ):
             print("Number of processes in kernel {} mismatch!".format(key))
             print(
                 " - Native: {}\n - Faasm: {}".format(
-                    native_results[key], wasm_results[key]
+                    native_results[key][0], wasm_results[key][0]
                 )
             )
             return False
 
     return True
+
+
+def propagate_error(wasm_results, native_results, num_proc):
+    """
+    Propagate standard error when computing the slowdown (ratio) between two
+    variables that already carry a standard error
+    """
+    wasm_times = [
+        wasm_results[kern][0]["ActualTime"].tolist()[num_proc]
+        for kern in wasm_results.keys()
+    ]
+    wasm_errs = [
+        wasm_results[kern][1]["ActualTime"].tolist()[num_proc]
+        for kern in wasm_results.keys()
+    ]
+    native_times = [
+        native_results[kern][0]["ActualTime"].tolist()[num_proc]
+        for kern in native_results.keys()
+    ]
+    native_errs = [
+        native_results[kern][1]["ActualTime"].tolist()[num_proc]
+        for kern in native_results.keys()
+    ]
+
+    yerr = []
+    for wt, nt, werr, nerr in zip(
+        wasm_times, native_times, wasm_errs, native_errs
+    ):
+        err = float(wt / nt) * sqrt(pow(werr / wt, 2) + pow(nerr / nt, 2))
+        yerr.append(err)
+
+    return yerr
 
 
 @task
@@ -84,7 +119,7 @@ def plot(ctx):
     # ... [x - w - w /2, x - w/2] [x - w/2, x + w/2] [x + w/2, x + w + w/2] ...
     kernels = wasm_results.keys()
     num_procs = len(
-        wasm_results[next(iter(wasm_results))]["WorldSize"].tolist()
+        wasm_results[next(iter(wasm_results))][0]["WorldSize"].tolist()
     )
     xs = np.arange(len(kernels))
     xmin = xs[0] - 0.5
@@ -102,27 +137,34 @@ def plot(ctx):
     # We group the results by kernel, but plot them world size by world size,
     # in order to get the right x offset
     for num_proc in range(num_procs):
-        _faasm = [
-            wasm_results[kern]["StatValue"].tolist()[num_proc]
+        wasm_times = [
+            wasm_results[kern][0]["ActualTime"].tolist()[num_proc]
             for kern in wasm_results.keys()
         ]
-        _native = [
-            native_results[kern]["StatValue"].tolist()[num_proc]
+        native_times = [
+            native_results[kern][0]["ActualTime"].tolist()[num_proc]
             for kern in native_results.keys()
         ]
         # Each bar must be set at the midpoint of the right offset
-        x = [_x + num_proc * col_width + col_width / 2 for _x in x_base]
+        x = [x_b + num_proc * col_width + col_width / 2 for x_b in x_base]
         # We plot the slowdown
-        y = [float(_f / _n) for _f, _n in zip(_faasm, _native)]
-        ax.bar(x, y, col_width)
+        y = [float(wt / nt) for wt, nt in zip(wasm_times, native_times)]
+        ax.bar(
+            x,
+            y,
+            width=col_width,
+            yerr=propagate_error(wasm_results, native_results, num_proc),
+        )
 
     # Prepare legend
-    ax.legend(["{} MPI proc.".format(2 ** num) for num in range(num_procs)])
+    ax.legend(
+        ["{} MPI proc.".format(2 ** (num + 1)) for num in range(num_procs)]
+    )
 
     # Aesthetics
     plt.hlines(1, xmin, xmax, linestyle="dashed", colors="red")
     plt.xlim(xmin, xmax)
-    plt.ylim(0, 2)
+    plt.ylim(0, 3.5)
     ax.set_xticks(xs)
     ax.set_xticklabels(wasm_results.keys())
     ax.set_ylabel("Slowdown [faasm / native]")
