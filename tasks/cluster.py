@@ -16,7 +16,7 @@ from tasks.util.env import (
 from tasks.util.version import get_k8s_version
 
 # Note - this must match the version used by Faasm
-KNATIVE_VERSION = "0.24.0"
+KNATIVE_VERSION = "1.1.0"
 K9S_VERSION = "0.24.15"
 
 
@@ -161,7 +161,7 @@ def install_kn(ctx, system=False):
     """
     Install the knative CLI (kn)
     """
-    url = "https://github.com/knative/client/releases/download/v{}/kn-linux-amd64".format(
+    url = "https://github.com/knative/client/releases/download/knative-v{}/kn-linux-amd64".format(
         KNATIVE_VERSION
     )
     binary_path = _download_binary(url, "kn-linux-amd64")
