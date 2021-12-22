@@ -19,7 +19,7 @@ XLABELS = {
     "p2p": "p2p\nMPI_{Send,Recv}",
     "transpose": "transpose\nMPI_{Isend,Irecv}",
     "reduce": "reduce\nMPI_Reduce",
-    "sparse": "reduce\nMPI_Allgather",
+    "sparse": "sparse\nMPI_Allgather",
 }
 
 
