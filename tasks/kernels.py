@@ -15,12 +15,22 @@ PLOTS_DIR = join(PLOTS_ROOT, "kernels")
 NATIVE_CSV = join(RESULTS_DIR, "kernels_native.csv")
 WASM_CSV = join(RESULTS_DIR, "kernels_wasm.csv")
 OUT_FILE = join(PLOTS_DIR, "slowdown.png")
+XLABELS = {
+    "p2p": "p2p\nMPI_{Send,Recv}",
+    "transpose": "transpose\nMPI_{Isend,Irecv}",
+    "reduce": "reduce\nMPI_Reduce",
+    "sparse": "reduce\nMPI_Allgather",
+}
 
 
 def _read_results(exp):
     result_dict = {}
 
     for csv in glob(join(RESULTS_DIR, "kernels_{}_*.csv".format(exp))):
+        # Blacklist two experiments we don't plot
+        if ("stencil" in csv) or ("nstream" in csv):
+            continue
+
         results = pd.read_csv(csv)
 
         # First filter only the timing stats, and then group by kernel
@@ -166,7 +176,7 @@ def plot(ctx):
     plt.xlim(xmin, xmax)
     plt.ylim(0, 3.5)
     ax.set_xticks(xs)
-    ax.set_xticklabels(wasm_results.keys())
+    ax.set_xticklabels([XLABELS[key] for key in wasm_results.keys()])
     ax.set_ylabel("Slowdown [faasm / native]")
     ax.set_title("Kernels time to completion slowdown Faasm vs Native")
     fig.tight_layout()
