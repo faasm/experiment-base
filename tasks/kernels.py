@@ -1,3 +1,4 @@
+from glob import glob
 from invoke import task
 from math import sqrt
 from os import makedirs
@@ -16,23 +17,22 @@ WASM_CSV = join(RESULTS_DIR, "kernels_wasm.csv")
 OUT_FILE = join(PLOTS_DIR, "slowdown.png")
 
 
-def _read_results(csv):
-    if not exists(csv):
-        raise RuntimeError("CSV not found: {}".format(csv))
-
-    results = pd.read_csv(csv)
-
-    # First filter only the timing stats, and then group by kernel
-    results = results.loc[results["StatName"] == "Avg time (s)"]
-    results = results.groupby("Kernel", as_index=False)
-
-    # Second, group by world size
+def _read_results(exp):
     result_dict = {}
-    for name, group in results:
-        result_dict[name] = [
-            group.groupby("WorldSize", as_index=False).mean(),
-            group.groupby("WorldSize", as_index=False).sem(),
-        ]
+
+    for csv in glob(join(RESULTS_DIR, "kernels_{}_*.csv".format(exp))):
+        results = pd.read_csv(csv)
+
+        # First filter only the timing stats, and then group by kernel
+        results = results.loc[results["StatName"] == "Avg time (s)"]
+        results = results.groupby("Kernel", as_index=False)
+
+        # Second, group by world size
+        for name, group in results:
+            result_dict[name] = [
+                group.groupby("WorldSize", as_index=False).mean(),
+                group.groupby("WorldSize", as_index=False).sem(),
+            ]
 
     return result_dict
 
@@ -84,11 +84,11 @@ def propagate_error(wasm_results, native_results, num_proc):
     ]
     native_times = [
         native_results[kern][0]["ActualTime"].tolist()[num_proc]
-        for kern in native_results.keys()
+        for kern in wasm_results.keys()
     ]
     native_errs = [
         native_results[kern][1]["ActualTime"].tolist()[num_proc]
-        for kern in native_results.keys()
+        for kern in wasm_results.keys()
     ]
 
     yerr = []
@@ -109,8 +109,8 @@ def plot(ctx):
     makedirs(PLOTS_DIR, exist_ok=True)
 
     # Load results and sanity check
-    native_results = _read_results(NATIVE_CSV)
-    wasm_results = _read_results(WASM_CSV)
+    native_results = _read_results("native")
+    wasm_results = _read_results("wasm")
     if not _check_results(native_results, wasm_results):
         return
 
@@ -143,7 +143,7 @@ def plot(ctx):
         ]
         native_times = [
             native_results[kern][0]["ActualTime"].tolist()[num_proc]
-            for kern in native_results.keys()
+            for kern in wasm_results.keys()
         ]
         # Each bar must be set at the midpoint of the right offset
         x = [x_b + num_proc * col_width + col_width / 2 for x_b in x_base]
