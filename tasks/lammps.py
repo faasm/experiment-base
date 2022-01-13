@@ -119,7 +119,7 @@ def plot(ctx, gui=False, plot_elapsed_times=True):
             wasm_speedup,
             yerr=wasm_speedup_errs,
             fmt=".-",
-            label="Faasm",
+            label="Faabric",
             ecolor="gray",
             elinewidth=0.8,
             capsize=1.0,
@@ -143,7 +143,7 @@ def plot(ctx, gui=False, plot_elapsed_times=True):
                 wasm_times["Actual"],
                 yerr=wasm_errs["Actual"],
                 fmt=".--",
-                label="Faasm",
+                label="Faabric",
                 ecolor="gray",
                 elinewidth=0.8,
                 capsize=1.0,
@@ -366,7 +366,7 @@ def plot_hoststats_resource(
         else:
             wasm_series = wasm_stats.get_median_stat(stat)
         wasm_series.index = wasm_series.index.total_seconds()
-        wasm_series.plot(ax=ax, label="Faasm")
+        wasm_series.plot(ax=ax, label="Faabric")
 
         if is_acc:
             native_series = native_stats.get_median_stat(stat).diff()
