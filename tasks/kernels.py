@@ -14,7 +14,7 @@ RESULTS_DIR = join(PROJ_ROOT, "results", "kernels")
 PLOTS_DIR = join(PLOTS_ROOT, "kernels")
 NATIVE_CSV = join(RESULTS_DIR, "kernels_native.csv")
 WASM_CSV = join(RESULTS_DIR, "kernels_wasm.csv")
-OUT_FILE = join(PLOTS_DIR, "slowdown.png")
+OUT_FILE = join(PLOTS_DIR, "slowdown.{}".format(PLOTS_FORMAT))
 XLABELS = {
     "p2p": "p2p\nMPI_{Send,Recv}",
     "transpose": "transpose\nMPI_{Isend,Irecv}",
@@ -168,16 +168,21 @@ def plot(ctx):
 
     # Prepare legend
     ax.legend(
-        ["{} MPI proc.".format(2 ** (num + 1)) for num in range(num_procs)]
+        [
+            "{} parallel functions".format(2 ** (num + 1))
+            for num in range(num_procs)
+        ],
+        ncol=2,
     )
 
     # Aesthetics
     plt.hlines(1, xmin, xmax, linestyle="dashed", colors="red")
     plt.xlim(xmin, xmax)
-    plt.ylim(0, 3.5)
+    plt.ylim(0, 1.5)
     ax.set_xticks(xs)
     ax.set_xticklabels([XLABELS[key] for key in wasm_results.keys()])
-    ax.set_ylabel("Slowdown [faasm / native]")
-    ax.set_title("Kernels time to completion slowdown Faasm vs Native")
+    ax.set_ylabel("Slowdown [Faabric / OpenMPI]")
+    plt.gca().set_aspect("equal")
+    # ax.set_title("Kernels time to completion slowdown Faasm vs Native")
     fig.tight_layout()
-    plt.savefig(OUT_FILE, format=PLOTS_FORMAT)
+    plt.savefig(OUT_FILE, format=PLOTS_FORMAT, bbox_inches="tight")
