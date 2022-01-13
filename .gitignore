@@ -11,6 +11,9 @@ results/lammps
 # Kernels results can also be ignored
 plots/kernels
 results/kernels
+# Migration results can be ignored
+plots/migration
+results/migration
 
 # Virtualenv
 venv/
