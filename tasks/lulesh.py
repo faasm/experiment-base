@@ -22,10 +22,16 @@ def _read_results(mode):
 
         num_thread = int(csv.split("_")[-1].split(".")[0])
 
-        result_dict[num_thread] = [
-            results["Time"].mean(),
-            results["Time"].sem(),
-        ]
+        if mode == "native":
+            result_dict[num_thread] = [
+                results["Time"].mean(),
+                results["Time"].sem(),
+            ]
+        else:
+            result_dict[num_thread] = [
+                results["Reported"].mean(),
+                results["Reported"].sem(),
+            ]
 
     return result_dict
 
@@ -39,26 +45,35 @@ def plot(ctx):
 
     # Load results
     native_results = _read_results("native")
+    wasm_results = _read_results("wasm")
 
-    # Plot results
     fig, ax = plt.subplots()
+
+    # Plot results - native
     x = list(native_results.keys())
     x.sort()
     y = [native_results[xs][0] for xs in x]
     yerr = [native_results[xs][1] for xs in x]
     ax.errorbar(x, y, yerr=yerr, fmt=".-")
 
+    # Plot results - wasm
+    x_wasm = list(wasm_results.keys())
+    x_wasm.sort()
+    y_wasm = [wasm_results[xs][0] for xs in x_wasm]
+    yerr_wasm = [wasm_results[xs][1] for xs in x_wasm]
+    ax.errorbar(x_wasm, y_wasm, yerr=yerr_wasm, fmt=".-")
+
     # Prepare legend
-    ax.legend(["OpenMP"])
+    ax.legend(["OpenMP", "Faabric"], loc="upper left")
 
     # Aesthetics
     ax.set_ylabel("Elapsed time [s]")
     ax.set_xlabel("# of parallel functions")
     ax.set_ylim(0)
-    ax.set_xlim(0)
+    ax.set_xlim(0, 30)
 
     fig.tight_layout()
-    # plt.gca().set_aspect(0.012)
+    plt.gca().set_aspect(0.1)
     plt.savefig(OUT_FILE, format=PLOTS_FORMAT, bbox_inches="tight")
 
     return
