@@ -13,3 +13,6 @@
 [submodule "experiments/sgx"]
 	path = experiments/sgx
 	url = git@github.com:faasm/experiment-sgx.git
+[submodule "experiments/openmp"]
+	path = experiments/openmp
+	url = https://github.com/faasm/experiment-openmp
