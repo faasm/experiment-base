@@ -4,6 +4,8 @@ from . import cluster
 from . import covid
 from . import kernels
 from . import lammps
+from . import lulesh
+from . import migration
 from . import monitor
 from . import storage
 from . import uk8s
@@ -13,6 +15,8 @@ ns = Collection(
     covid,
     kernels,
     lammps,
+    lulesh,
+    migration,
     monitor,
     storage,
     uk8s,

@@ -6,6 +6,7 @@ from matplotlib.colors import LinearSegmentedColormap
 import matplotlib.gridspec as gridspec
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
+from matplotlib.figure import figaspect
 import numpy as np
 import pandas as pd
 from invoke import task
@@ -61,13 +62,13 @@ def plot(ctx, gui=False, plot_elapsed_times=True):
     """
     Plot the LAMMPS results
     """
-    fig, ax = plt.subplots(nrows=1, ncols=2, sharex=True)
+    fig, ax = plt.subplots(nrows=1, ncols=2, sharex=True, figsize=(6, 3))
     makedirs(PLOTS_DIR, exist_ok=True)
-    plot_file = join(PLOTS_DIR, "runtime.png")
+    plot_file = join(PLOTS_DIR, "runtime.{}".format(PLOTS_FORMAT))
 
-    fig.suptitle(
-        "LAMMPS speed-up Faasm vs OpenMPI\n(overlayed with elapsed time)"
-    )
+    #     fig.suptitle(
+    #         "LAMMPS speed-up Faasm vs OpenMPI\n(overlayed with elapsed time)"
+    #     )
 
     for bench, coords in zip(BENCHMARKS, PLOT_COORDS):
         # Process data
@@ -118,7 +119,7 @@ def plot(ctx, gui=False, plot_elapsed_times=True):
             wasm_speedup,
             yerr=wasm_speedup_errs,
             fmt=".-",
-            label="Faasm",
+            label="Faabric",
             ecolor="gray",
             elinewidth=0.8,
             capsize=1.0,
@@ -142,7 +143,7 @@ def plot(ctx, gui=False, plot_elapsed_times=True):
                 wasm_times["Actual"],
                 yerr=wasm_errs["Actual"],
                 fmt=".--",
-                label="Faasm",
+                label="Faabric",
                 ecolor="gray",
                 elinewidth=0.8,
                 capsize=1.0,
@@ -159,28 +160,33 @@ def plot(ctx, gui=False, plot_elapsed_times=True):
                 capsize=1.0,
                 alpha=0.3,
             )
-            ax_et.set_ylabel("Elapsed time [s]")
+            if coords == 1:
+                ax_et.set_ylabel("Elapsed time [s]")
             ax_et.set_ylim(bottom=0)
 
         ax[coords].title.set_text("{}-bound benchmark".format(bench))
         ax[coords].set_ylim(bottom=0)
         ax[coords].set_xlim(left=0)
-        ax[coords].set_xlabel("MPI World Size")
-        ax[coords].set_ylabel("Speed Up (vs 1 MPI Proc performance)")
+        ax[coords].set_xticks([2 * i for i in range(9)])
+        ax[coords].set_xlabel("# of parallel functions")
+        if coords == 0:
+            ax[coords].set_ylabel("Speed Up (vs 1 MPI Proc performance)")
 
     # Print legend
     handles, labels = ax[1].get_legend_handles_labels()
-    fig.legend(handles, labels)
+    fig.legend(handles, labels, bbox_to_anchor=(0.22, 0.79), loc="center")
 
     fig.tight_layout()
 
+    # Set aspect ratio
+
     # Manually add common axis labels
-    fig.text(0.015, 0.5, "", ha="center", va="center", rotation="vertical")
+    # fig.text(0.015, 0.5, "", ha="center", va="center", rotation="vertical")
 
     if gui:
         fig.show()
     else:
-        fig.savefig(plot_file, format=PLOTS_FORMAT)
+        fig.savefig(plot_file, format=PLOTS_FORMAT, bbox_inches="tight")
 
 
 @task
@@ -360,7 +366,7 @@ def plot_hoststats_resource(
         else:
             wasm_series = wasm_stats.get_median_stat(stat)
         wasm_series.index = wasm_series.index.total_seconds()
-        wasm_series.plot(ax=ax, label="Faasm")
+        wasm_series.plot(ax=ax, label="Faabric")
 
         if is_acc:
             native_series = native_stats.get_median_stat(stat).diff()
