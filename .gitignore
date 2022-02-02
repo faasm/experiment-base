@@ -4,17 +4,6 @@ bin/kn
 bin/kn-linux-amd64
 bin/k9s
 
-# Plots and results
-# LAMMPS experiment is robust enough to ignore these files
-plots/lammps
-results/lammps
-# Kernels results can also be ignored
-plots/kernels
-results/kernels
-# Migration results can be ignored
-plots/migration
-results/migration
-
 # Virtualenv
 venv/
 
