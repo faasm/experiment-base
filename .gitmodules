@@ -1,6 +1,3 @@
-[submodule "experiments/pywren"]
-	path = experiments/pywren
-	url = https://github.com/faasm/experiment-pywren
 [submodule "experiments/mpi"]
 	path = experiments/mpi
 	url = git@github.com:faasm/experiment-mpi.git

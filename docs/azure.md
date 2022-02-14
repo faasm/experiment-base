@@ -48,7 +48,7 @@ inv cluster.credentials
 ```
 
 From here you can follow the [Faasm k8s
-instructions](https://github.com/faasm/faasm/blob/master/docs/kubernetes.md)
+instructions](https://github.com/faasm/faasm/blob/main/docs/kubernetes.md)
 from a normal Faasm checkout.
 
 ### Clearing up
