@@ -11,16 +11,29 @@ AZURE_REGION = "eastus"
 AZURE_STORAGE_SKU = "Standard_LRS"
 AKS_CLUSTER_NAME = "faasm-cluster"
 
-# 4 4-core machines: kernels, lammps, and migration experiment w/ 4 parallel functions
-# AZURE_VM_SIZE = "Standard_D4_v5"
-# AKS_CLUSTER_NODE_COUNT = 4
-
-# 2 8-core machines: migration experiment w/ 8 parallel functions
-# AZURE_VM_SIZE = "Standard_D8_v5"
-# AKS_CLUSTER_NODE_COUNT = 2
-
-# 1 16-core machine: LULESH experiment
-AZURE_VM_SIZE = "Standard_D16_v5"
-AKS_CLUSTER_NODE_COUNT = 4
-
 KUBECTL_BIN = join(PROJ_ROOT, "bin", "kubectl")
+
+AZURE_PUB_SSH_KEY = "~/.ssh/id_rsa.pub"
+AZURE_SSH_KEY = "~/.ssh/id_rsa"
+
+# ----------------------------
+# VM SIZING NOTES
+#
+# For hacking around, the standard A-series VMs are fine.
+# https://docs.microsoft.com/en-us/azure/virtual-machines/av2-series
+#
+# e.g. Standard_A8_v2: 8 cores, 16GB mem
+#
+# For single VM benchmarks and cluster experiments, the D-series machines are
+# more appropriate as they use higher grade CPUs.
+# https://docs.microsoft.com/en-us/azure/virtual-machines/dv3-dsv3-series
+#
+# e.g. Standard_D16_v2: 16 cores, 64GB mem
+# e.g. Standard_D32_v3: 32 cores, 128GB mem
+
+AZURE_VM_ADMIN = "faasm"
+AZURE_VM_IMAGE = "Canonical:0001-com-ubuntu-server-focal:20_04-lts:latest"
+
+AZURE_STANDALONE_VM_SIZE = "Standard_A8_v2"
+AZURE_K8S_VM_SIZE = "Standard_D16_v5"
+AKS_CLUSTER_NODE_COUNT = 4

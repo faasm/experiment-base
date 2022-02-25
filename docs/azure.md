@@ -59,20 +59,32 @@ Once finished with the cluster, you can delete it with:
 inv cluster.delete
 ```
 
-## Creating a VM Scale Set Cluster
+## Setting up VMs
 
-Note that these are only needed for running micro benchmarks.
-
-To bootstrap the cluster run:
+List any in existence:
 
 ```bash
-./az-vm/az_vms.sh create <NUM_VMS>
+inv vm.list
 ```
 
-You will have to modify the script if you want to change the VM type.
-
-To delete the cluster:
+Create a new one:
 
 ```bash
-./az-vm/az_vms.sh delete
+inv vm.create
 ```
+
+Delete one:
+
+```bash
+inv vm.delete <VM_ID>
+```
+
+Delete all:
+
+```bash
+inv vm.delete-all
+```
+
+The size of VMs is determined in the script itself, so you can tweak it there if
+necessary.
+

@@ -3,10 +3,7 @@ from invoke import task
 from subprocess import check_output, run
 from tasks.util.env import (
     AZURE_RESOURCE_GROUP,
-    AZURE_REGION,
     AZURE_STORAGE_SKU,
-    AZURE_VM_SIZE,
-    AKS_CLUSTER_NODE_COUNT,
 )
 
 
