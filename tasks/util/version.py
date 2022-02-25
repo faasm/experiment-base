@@ -6,6 +6,7 @@ from tasks.util.env import PROJ_ROOT
 KNATIVE_VERSION = "1.1.0"
 K9S_VERSION = "0.24.15"
 
+
 def _read_ver_file(file_path):
     with open(file_path, "r") as fh:
         ver = fh.read()
