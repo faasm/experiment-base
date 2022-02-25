@@ -62,8 +62,8 @@ which kn
 kn version
 ```
 
-It's highly advices that you install [`k9s`](https://github.com/derailed/k9s)
-too, as it makes managing the cluster much easier than running `kubectl` all the
+We also recommend that you install [`k9s`](https://github.com/derailed/k9s) too,
+as it makes managing the cluster much easier than running `kubectl` all the
 time.
 
 ```bash

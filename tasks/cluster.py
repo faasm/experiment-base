@@ -9,16 +9,11 @@ from tasks.util.env import (
     GLOBAL_BIN_DIR,
     KUBECTL_BIN,
     AZURE_RESOURCE_GROUP,
-    AZURE_VM_SIZE,
+    AZURE_K8S_VM_SIZE,
     AKS_CLUSTER_NODE_COUNT,
     AKS_CLUSTER_NAME,
 )
 from tasks.util.version import get_k8s_version
-
-# Note - this must match the version used by Faasm
-KNATIVE_VERSION = "1.1.0"
-K9S_VERSION = "0.24.15"
-
 
 # AKS commandline reference here:
 # https://docs.microsoft.com/en-us/cli/azure/aks?view=azure-cli-latest
@@ -57,7 +52,7 @@ def provision(ctx):
         [
             "--name {}".format(AKS_CLUSTER_NAME),
             "--node-count {}".format(AKS_CLUSTER_NODE_COUNT),
-            "--node-vm-size {}".format(AZURE_VM_SIZE),
+            "--node-vm-size {}".format(AZURE_K8S_VM_SIZE),
             "--kubernetes-version {}".format(k8s_ver),
             "--generate-ssh-keys",
         ],
