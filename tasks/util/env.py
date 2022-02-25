@@ -6,12 +6,15 @@ BIN_DIR = join(PROJ_ROOT, "bin")
 GLOBAL_BIN_DIR = "/usr/local/bin"
 
 AZURE_RESOURCE_GROUP = "faasm"
-AZURE_REGION = "eastus"
+AZURE_REGION = "uksouth"
 
 AZURE_STORAGE_SKU = "Standard_LRS"
 AKS_CLUSTER_NAME = "faasm-cluster"
 
 KUBECTL_BIN = join(PROJ_ROOT, "bin", "kubectl")
+
+AZURE_PUB_SSH_KEY = "~/.ssh/id_rsa.pub"
+AZURE_SSH_KEY = "~/.ssh/id_rsa"
 
 # ----------------------------
 # VM SIZING NOTES
@@ -29,8 +32,8 @@ KUBECTL_BIN = join(PROJ_ROOT, "bin", "kubectl")
 # e.g. Standard_D32_v3: 32 cores, 128GB mem
 
 AZURE_VM_ADMIN = "faasm"
-AZURE_VM_IMAGE = "UbuntuLTS"
+AZURE_VM_IMAGE = "Canonical:0001-com-ubuntu-server-focal:20_04-lts:latest"
+
 AZURE_STANDALONE_VM_SIZE = "Standard_A8_v2"
 AZURE_K8S_VM_SIZE = "Standard_D16_v5"
 AKS_CLUSTER_NODE_COUNT = 4
-

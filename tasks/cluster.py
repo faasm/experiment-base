@@ -10,6 +10,7 @@ from tasks.util.env import (
     KUBECTL_BIN,
     AZURE_RESOURCE_GROUP,
     AZURE_K8S_VM_SIZE,
+    AZURE_PUB_SSH_KEY,
     AKS_CLUSTER_NODE_COUNT,
     AKS_CLUSTER_NAME,
 )
@@ -53,8 +54,9 @@ def provision(ctx):
             "--name {}".format(AKS_CLUSTER_NAME),
             "--node-count {}".format(AKS_CLUSTER_NODE_COUNT),
             "--node-vm-size {}".format(AZURE_K8S_VM_SIZE),
+            "--os-sku Ubuntu",
             "--kubernetes-version {}".format(k8s_ver),
-            "--generate-ssh-keys",
+            "--ssh-key-value {}".format(AZURE_PUB_SSH_KEY),
         ],
     )
 
