@@ -74,18 +74,36 @@ def _list_all_vms():
     return res
 
 
-def _delete_vm(name):
-    print("Deleting VM {}".format(name))
+def _vm_op(op, name, extra_args):
+    print("Performing {} on {}".format(op, name))
 
     cmd = [
-        "az vm delete",
+        "az vm {}".format(op),
         "--resource-group {}".format(AZURE_RESOURCE_GROUP),
         "--name {}".format(name),
-        "--yes",
     ]
+    cmd.extend(extra_args)
+
     cmd = " ".join(cmd)
     print(cmd)
     run(cmd, shell=True, check=True)
+
+
+@task
+def start(ctx, name):
+    """
+    Starts (powers on) the given Azure VM.
+    """
+    _vm_op("start", name, ["--no-wait"])
+
+
+@task
+def deallocate(ctx, name):
+    """
+    Deallocates, i.e. powers down and deallocates compute resource for the
+    given Azure VM so that it's not billed.
+    """
+    _vm_op("stop", name, list())
 
 
 @task
@@ -93,7 +111,7 @@ def delete(ctx, name):
     """
     Deletes the given Azure VM
     """
-    _delete_vm(name)
+    _vm_op("delete", name, ["--yes"])
 
 
 @task
@@ -103,7 +121,7 @@ def delete_all(ctx):
     """
     res = _list_all_vms()
     for vm in res:
-        _delete_vm(vm["name"])
+        _vm_op("delete", vm["name"])
 
 
 @task
