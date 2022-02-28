@@ -74,7 +74,7 @@ def _list_all_vms():
     return res
 
 
-def _vm_op(op, name, extra_args):
+def _vm_op(op, name, extra_args=None):
     print("Performing {} on {}".format(op, name))
 
     cmd = [
@@ -82,7 +82,9 @@ def _vm_op(op, name, extra_args):
         "--resource-group {}".format(AZURE_RESOURCE_GROUP),
         "--name {}".format(name),
     ]
-    cmd.extend(extra_args)
+
+    if extra_args:
+        cmd.extend(extra_args)
 
     cmd = " ".join(cmd)
     print(cmd)
@@ -103,7 +105,7 @@ def deallocate(ctx, name):
     Deallocates, i.e. powers down and deallocates compute resource for the
     given Azure VM so that it's not billed.
     """
-    _vm_op("stop", name, list())
+    _vm_op("stop", name)
 
 
 @task
@@ -121,7 +123,7 @@ def delete_all(ctx):
     """
     res = _list_all_vms()
     for vm in res:
-        _vm_op("delete", vm["name"])
+        _vm_op("delete", vm["name"], ["--yes"])
 
 
 @task
