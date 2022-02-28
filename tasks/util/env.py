@@ -33,8 +33,8 @@ AZURE_SSH_KEY = "~/.ssh/id_rsa"
 # are more appropriate (but more expensive).
 # https://docs.microsoft.com/en-us/azure/virtual-machines/dv3-dsv3-series
 #
-# e.g. Standard_D16_v3: 16 cores, 64GB mem
-# e.g. Standard_D32_v3: 32 cores, 128GB mem
+# e.g. Standard_D16_v5: 16 cores, 64GB mem
+# e.g. Standard_D32_v5: 32 cores, 128GB mem
 #
 # ---------------------------
 
@@ -45,6 +45,5 @@ AZURE_STANDALONE_VM_SIZE = "Standard_D8_v5"
 AZURE_K8S_VM_SIZE = "Standard_D16_v5"
 AKS_CLUSTER_NODE_COUNT = 4
 
-AZURE_SGX_VM_SSH_KEY_FILE = "{}/experiments/sgx/pkeys".format(PROJ_ROOT)
 AZURE_SGX_VM_IMAGE = "Canonical:UbuntuServer:18_04-lts-gen2:18.04.202109180"
 AZURE_SGX_VM_SIZE = "Standard_DC2ds_v3"

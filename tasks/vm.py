@@ -11,7 +11,6 @@ from tasks.util.env import (
     AZURE_VM_ADMIN,
     AZURE_VM_IMAGE,
     AZURE_STANDALONE_VM_SIZE,
-    AZURE_SGX_VM_SSH_KEY_FILE,
     AZURE_SGX_VM_IMAGE,
     AZURE_SGX_VM_SIZE,
 )
@@ -102,24 +101,20 @@ def create(ctx, region=AZURE_REGION, sgx=False, name=None):
         "--name {}".format(name),
         "--admin-username {}".format(AZURE_VM_ADMIN),
         "--location {}".format(region),
+        "--ssh-key-value {}".format(AZURE_PUB_SSH_KEY),
     ]
 
     if sgx:
         cmd.extend(
             [
                 "--image {}".format(AZURE_SGX_VM_IMAGE),
-                "--ssh-key-values {}".format(AZURE_SGX_VM_SSH_KEY_FILE),
                 "--size {}".format(AZURE_SGX_VM_SIZE),
-                "--authentication-type ssh",
-                "--public-ip-sku Standard",
-                "--generate-ssh-keys",
             ]
         )
     else:
         cmd.extend(
             [
                 "--image {}".format(AZURE_VM_IMAGE),
-                "--ssh-key-value {}".format(AZURE_PUB_SSH_KEY),
                 "--size {}".format(AZURE_STANDALONE_VM_SIZE),
             ]
         )
@@ -199,11 +194,14 @@ def delete(ctx, name):
     _vm_op("delete", name, ["--yes"])
 
     # Delete OS disk
-    delete_disk_cmd = (
-        "az disk delete --resource-group {} --name {} --yes".format(
-            AZURE_RESOURCE_GROUP, os_disk
-        ),
-    )
+    delete_disk_cmd = [
+        "az disk delete",
+        "--resource-group {}".format(AZURE_RESOURCE_GROUP),
+        "--name {}".format(os_disk),
+        "--yes",
+    ]
+
+    delete_disk_cmd = " ".join(delete_disk_cmd)
     print(delete_disk_cmd)
     run(
         delete_disk_cmd,
