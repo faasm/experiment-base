@@ -11,17 +11,28 @@ from tasks.util.env import (
     AZURE_VM_ADMIN,
     AZURE_VM_IMAGE,
     AZURE_STANDALONE_VM_SIZE,
+    AZURE_SGX_VM_SSH_KEY_FILE,
+    AZURE_SGX_VM_IMAGE,
+    AZURE_SGX_VM_SIZE,
 )
+
+# Network components to be deleted, order matters
+VM_NET_COMPONENTS = [
+    ("nic", "VMNic"),
+    ("nsg", "NSG"),
+    ("vnet", "VNET"),
+    ("public-ip", "PublicIp"),
+]
 
 
 @task
-def create(ctx, region=AZURE_REGION):
+def create(ctx, region=AZURE_REGION, sgx=False):
     """
     Creates a single Azure VM
     """
 
     timestamp = datetime.now().strftime("%d%m%Y-%H%M%S")
-    name = "faasm-vm-{}".format(timestamp)
+    name = "faasm-vm{}-{}".format("-sgx" if sgx else "", timestamp)
 
     print(
         "Creating VM {}, size {}, region {}".format(
@@ -33,12 +44,30 @@ def create(ctx, region=AZURE_REGION):
         "az vm create",
         "--resource-group {}".format(AZURE_RESOURCE_GROUP),
         "--name {}".format(name),
-        "--image {}".format(AZURE_VM_IMAGE),
         "--admin-username {}".format(AZURE_VM_ADMIN),
-        "--size {}".format(AZURE_STANDALONE_VM_SIZE),
-        "--ssh-key-value {}".format(AZURE_PUB_SSH_KEY),
         "--location {}".format(region),
     ]
+
+    if sgx:
+        cmd.extend(
+            [
+                "--image {}".format(AZURE_SGX_VM_IMAGE),
+                "--ssh-key-values {}".format(AZURE_SGX_VM_SSH_KEY_FILE),
+                "--size {}".format(AZURE_SGX_VM_SIZE),
+                "--authentication-type ssh",
+                "--public-ip-sku Standard",
+                "--generate-ssh-keys",
+            ]
+        )
+    else:
+        cmd.extend(
+            [
+                "--image {}".format(AZURE_VM_IMAGE),
+                "--ssh-key-value {}".format(AZURE_PUB_SSH_KEY),
+                "--size {}".format(AZURE_STANDALONE_VM_SIZE),
+            ]
+        )
+
     cmd = " ".join(cmd)
     print(cmd)
 
@@ -74,7 +103,7 @@ def _list_all_vms():
     return res
 
 
-def _vm_op(op, name, extra_args=None):
+def _vm_op(op, name, extra_args=None, capture=False):
     print("Performing {} on {}".format(op, name))
 
     cmd = [
@@ -88,7 +117,12 @@ def _vm_op(op, name, extra_args=None):
 
     cmd = " ".join(cmd)
     print(cmd)
-    run(cmd, shell=True, check=True)
+
+    if capture:
+        res = run(cmd, shell=True, check=True, stdout=PIPE, stderr=PIPE)
+        return res.stdout.decode("utf-8")
+    else:
+        run(cmd, shell=True, check=True)
 
 
 @task
@@ -113,7 +147,40 @@ def delete(ctx, name):
     """
     Deletes the given Azure VM
     """
+    # Get OS disk name
+    disk_out = _vm_op(
+        "show",
+        name,
+        [
+            "--query storageProfile.osDisk.managedDisk.id",
+        ],
+        capture=True,
+    )
+    os_disk = disk_out.split("/")[-1][:-2]
+
+    # Delete the VM itself
     _vm_op("delete", name, ["--yes"])
+
+    # Delete OS disk
+    run(
+        "az disk delete --resource-group {} --name {} --yes".format(
+            AZURE_RESOURCE_GROUP, os_disk
+        ),
+        shell=True,
+    )
+
+    # Delete all the network components
+    for name, suffix in VM_NET_COMPONENTS:
+        cmd = [
+            "az",
+            "network {}".format(name),
+            "delete",
+            "--resource-group {}".format(AZURE_RESOURCE_GROUP),
+            "--name {}{}".format(name, suffix),
+        ]
+
+        cmd = " ".join(cmd)
+        run(cmd, shell=True, check=True)
 
 
 @task
@@ -147,7 +214,6 @@ def ip(ctx, name):
     """
     Show the IP details of a given VM
     """
-
     cmd = [
         "az vm list-ip-addresses",
         "-n {}".format(name),
