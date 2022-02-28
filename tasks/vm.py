@@ -25,14 +25,70 @@ VM_NET_COMPONENTS = [
 ]
 
 
+def _get_ip(name):
+    cmd = [
+        "az vm list-ip-addresses",
+        "-n {}".format(name),
+        "-g {}".format(AZURE_RESOURCE_GROUP),
+    ]
+
+    cmd = " ".join(cmd)
+    res = run(cmd, shell=True, check=True, stdout=PIPE, stderr=STDOUT)
+
+    res = json.loads(res.stdout)
+    vm_info = res[0]["virtualMachine"]
+    return vm_info["network"]["publicIpAddresses"][0]["ipAddress"]
+
+
+def _list_all_vms():
+    cmd = [
+        "az vm list",
+        "--resource-group {}".format(AZURE_RESOURCE_GROUP),
+    ]
+    cmd = " ".join(cmd)
+
+    res = run(cmd, shell=True, check=True, stdout=PIPE, stdin=PIPE)
+
+    res = json.loads(res.stdout)
+    print("Found {} VMs".format(len(res)))
+
+    return res
+
+
+def _vm_op(op, name, extra_args=None, capture=False):
+    print("Performing {} on {}".format(op, name))
+
+    cmd = [
+        "az vm {}".format(op),
+        "--resource-group {}".format(AZURE_RESOURCE_GROUP),
+        "--name {}".format(name),
+    ]
+
+    if extra_args:
+        cmd.extend(extra_args)
+
+    cmd = " ".join(cmd)
+    print(cmd)
+
+    if capture:
+        res = run(cmd, shell=True, check=True, stdout=PIPE, stderr=PIPE)
+        return res.stdout.decode("utf-8")
+    else:
+        run(cmd, shell=True, check=True)
+
+
+def _build_ssh_command(ip_addr):
+    return "ssh -A -i {} {}@{}".format(AZURE_SSH_KEY, AZURE_VM_ADMIN, ip_addr)
+
+
 @task
-def create(ctx, region=AZURE_REGION, sgx=False):
+def create(ctx, region=AZURE_REGION, sgx=False, name=None):
     """
     Creates a single Azure VM
     """
-
-    timestamp = datetime.now().strftime("%d%m%Y-%H%M%S")
-    name = "faasm-vm{}-{}".format("-sgx" if sgx else "", timestamp)
+    if not name:
+        timestamp = datetime.now().strftime("%d%m%Y-%H%M%S")
+        name = "faasm-vm{}-{}".format("-sgx" if sgx else "", timestamp)
 
     print(
         "Creating VM {}, size {}, region {}".format(
@@ -77,52 +133,34 @@ def create(ctx, region=AZURE_REGION, sgx=False):
         res = json.loads(res.stdout)
 
         print("\nTo SSH:")
-        print(
-            "ssh -A -i {} {}@{}".format(
-                AZURE_SSH_KEY, AZURE_VM_ADMIN, res["publicIpAddress"]
-            )
-        )
+        print(_build_ssh_command(res["publicIpAddress"]))
     else:
         print(res.stderr)
         print(res.stdout)
         raise RuntimeError("Failed to provision VM")
 
 
-def _list_all_vms():
-    cmd = [
-        "az vm list",
-        "--resource-group {}".format(AZURE_RESOURCE_GROUP),
-    ]
-    cmd = " ".join(cmd)
+@task
+def ssh(ctx, name):
+    """
+    Prints SSH information for given VM
+    """
+    ip_addr = _get_ip(name)
+    print("--- SSH command ---\n")
+    print(_build_ssh_command(ip_addr))
 
-    res = run(cmd, shell=True, check=True, stdout=PIPE, stdin=PIPE)
-
-    res = json.loads(res.stdout)
-    print("Found {} VMs".format(len(res)))
-
-    return res
-
-
-def _vm_op(op, name, extra_args=None, capture=False):
-    print("Performing {} on {}".format(op, name))
-
-    cmd = [
-        "az vm {}".format(op),
-        "--resource-group {}".format(AZURE_RESOURCE_GROUP),
-        "--name {}".format(name),
-    ]
-
-    if extra_args:
-        cmd.extend(extra_args)
-
-    cmd = " ".join(cmd)
-    print(cmd)
-
-    if capture:
-        res = run(cmd, shell=True, check=True, stdout=PIPE, stderr=PIPE)
-        return res.stdout.decode("utf-8")
-    else:
-        run(cmd, shell=True, check=True)
+    print("\n--- SSH config ---")
+    print(
+        """
+# Faasm SGX VM
+Host {}
+HostName {}
+User {}
+ForwardAgent yes
+        """.format(
+            name, ip_addr, AZURE_VM_ADMIN
+        )
+    )
 
 
 @task
@@ -214,15 +252,5 @@ def ip(ctx, name):
     """
     Show the IP details of a given VM
     """
-    cmd = [
-        "az vm list-ip-addresses",
-        "-n {}".format(name),
-        "-g {}".format(AZURE_RESOURCE_GROUP),
-    ]
-
-    cmd = " ".join(cmd)
-    res = run(cmd, shell=True, check=True, stdout=PIPE, stderr=STDOUT)
-
-    res = json.loads(res.stdout)
-    vm_info = res[0]["virtualMachine"]
-    print(vm_info["network"]["publicIpAddresses"][0]["ipAddress"])
+    ip = _get_ip()
+    print(ip)
