@@ -129,7 +129,6 @@ def create(ctx, region=AZURE_REGION, sgx=False, name=None):
 
     res = run(cmd, shell=True, stdout=PIPE, stderr=PIPE)
     if res.returncode == 0:
-        print(res.stdout)
         res = json.loads(res.stdout)
 
         print("\nTo SSH:")
@@ -208,16 +207,17 @@ def delete(ctx, name):
     )
 
     # Delete all the network components
-    for name, suffix in VM_NET_COMPONENTS:
+    for component, suffix in VM_NET_COMPONENTS:
         cmd = [
             "az",
-            "network {}".format(name),
+            "network {}".format(component),
             "delete",
             "--resource-group {}".format(AZURE_RESOURCE_GROUP),
             "--name {}{}".format(name, suffix),
         ]
 
         cmd = " ".join(cmd)
+        print(cmd)
         run(cmd, shell=True, check=True)
 
 
