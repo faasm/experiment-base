@@ -9,10 +9,11 @@ from tasks.util.env import (
     GLOBAL_BIN_DIR,
     KUBECTL_BIN,
     AZURE_RESOURCE_GROUP,
-    AZURE_K8S_VM_SIZE,
     AZURE_PUB_SSH_KEY,
-    AKS_CLUSTER_NODE_COUNT,
-    AKS_CLUSTER_NAME,
+    AZURE_K8S_CLUSTER_NAME,
+    AZURE_K8S_NODE_COUNT,
+    AZURE_K8S_REGION,
+    AZURE_K8S_VM_SIZE,
 )
 from tasks.util.version import get_k8s_version
 
@@ -47,21 +48,35 @@ def list(ctx):
 
 
 @task
-def provision(ctx):
+def provision(
+    ctx,
+    nodes=AZURE_K8S_NODE_COUNT,
+    vm=AZURE_K8S_VM_SIZE,
+    location=AZURE_K8S_REGION,
+    sgx=False,
+):
     """
     Provision the AKS cluster
     """
     k8s_ver = get_k8s_version()
 
+    if sgx and "Standard_DC" not in vm:
+        print(
+            "Error provisioning SGX cluster: only `Standard_DC` VMs are supported"
+        )
+        return
+
     _run_aks_cmd(
         "create",
         [
-            "--name {}".format(AKS_CLUSTER_NAME),
-            "--node-count {}".format(AKS_CLUSTER_NODE_COUNT),
-            "--node-vm-size {}".format(AZURE_K8S_VM_SIZE),
+            "--name {}".format(AZURE_K8S_CLUSTER_NAME),
+            "--node-count {}".format(node_count),
+            "--node-vm-size {}".format(vm_size),
             "--os-sku Ubuntu",
             "--kubernetes-version {}".format(k8s_ver),
             "--ssh-key-value {}".format(AZURE_PUB_SSH_KEY),
+            "--location {}".format(location),
+            "{}".format("--enable-addons confcom" if sgx else ""),
         ],
     )
 
