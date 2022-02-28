@@ -53,11 +53,18 @@ def provision(
     nodes=AZURE_K8S_NODE_COUNT,
     vm=AZURE_K8S_VM_SIZE,
     location=AZURE_K8S_REGION,
+    sgx=False,
 ):
     """
     Provision the AKS cluster
     """
     k8s_ver = get_k8s_version()
+
+    if sgx and "Standard_DC" not in vm:
+        print(
+            "Error provisioning SGX cluster: only `Standard_DC` VMs are supported"
+        )
+        return
 
     _run_aks_cmd(
         "create",
@@ -69,9 +76,7 @@ def provision(
             "--kubernetes-version {}".format(k8s_ver),
             "--ssh-key-value {}".format(AZURE_PUB_SSH_KEY),
             "--location {}".format(location),
-            "{}".format(
-                "--enable-addons confcom" if "Standard_DC" in vm else ""
-            ),
+            "{}".format("--enable-addons confcom" if sgx else ""),
         ],
     )
 
