@@ -199,10 +199,15 @@ def delete(ctx, name):
     _vm_op("delete", name, ["--yes"])
 
     # Delete OS disk
-    run(
+    delete_disk_cmd = (
         "az disk delete --resource-group {} --name {} --yes".format(
             AZURE_RESOURCE_GROUP, os_disk
         ),
+    )
+    print(delete_disk_cmd)
+    run(
+        delete_disk_cmd,
+        check=True,
         shell=True,
     )
 
