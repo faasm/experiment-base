@@ -70,8 +70,8 @@ def provision(
         "create",
         [
             "--name {}".format(AZURE_K8S_CLUSTER_NAME),
-            "--node-count {}".format(node_count),
-            "--node-vm-size {}".format(vm_size),
+            "--node-count {}".format(nodes),
+            "--node-vm-size {}".format(vm),
             "--os-sku Ubuntu",
             "--kubernetes-version {}".format(k8s_ver),
             "--ssh-key-value {}".format(AZURE_PUB_SSH_KEY),
