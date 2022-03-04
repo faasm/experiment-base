@@ -10,14 +10,6 @@ cloud provider or locally:
 - [Azure cluster setup](docs/azure.md).
 - [Local cluster setup](docs/local.md).
 
-Once you have a cluster, each experiment repo contains specific information on
-how to run it:
-
-- [MPI (LAMMPS and ParRes Kernels)](https://github.com/faasm/experiment-mpi)
-- [OpenMP (Covid)](https://github.com/faasm/experiment-covid)
-- [Microbenchmarks (Polybench and
-  Python)](https://github.com/faasm/experiment-microbench)
-
 ## Setup
 
 ```bash
