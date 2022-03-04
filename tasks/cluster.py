@@ -89,7 +89,7 @@ def details(ctx):
     _run_aks_cmd(
         "show",
         [
-            "--name {}".format(AKS_CLUSTER_NAME),
+            "--name {}".format(AZURE_K8S_CLUSTER_NAME),
         ],
     )
 
@@ -102,7 +102,7 @@ def delete(ctx):
     _run_aks_cmd(
         "delete",
         [
-            "--name {}".format(AKS_CLUSTER_NAME),
+            "--name {}".format(AZURE_K8S_CLUSTER_NAME),
             "--yes",
         ],
     )
@@ -117,7 +117,7 @@ def credentials(ctx):
     _run_aks_cmd(
         "get-credentials",
         [
-            "--name {}".format(AKS_CLUSTER_NAME),
+            "--name {}".format(AZURE_K8S_CLUSTER_NAME),
             "--overwrite-existing",
         ],
     )
