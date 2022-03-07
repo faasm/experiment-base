@@ -43,7 +43,7 @@ AZURE_VM_IMAGE = "Canonical:0001-com-ubuntu-server-focal:20_04-lts:latest"
 AZURE_STANDALONE_VM_SIZE = "Standard_D8_v5"
 
 AZURE_SGX_VM_IMAGE = "Canonical:UbuntuServer:18_04-lts-gen2:18.04.202109180"
-AZURE_SGX_VM_SIZE = "Standard_DC2ds_v3"
+AZURE_SGX_VM_SIZE = "Standard_DC4s_v3"
 
 # ----------------------------
 # Azure Kubernetes Service (AKS) Cluster
