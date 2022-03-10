@@ -9,6 +9,7 @@ cloud provider or locally:
 
 - [Azure cluster setup](docs/azure.md).
 - [Local cluster setup](docs/local.md).
+- [Installing and configuring K8s](docs/k8s.md).
 
 ## Setup
 
@@ -28,8 +29,8 @@ You also need to install the correct versions of `kubectl` and `kn`, which can
 be done using the tasks in this repo:
 
 ```bash
-inv cluster.install-kubectl --system
-inv cluster.install-kn --system
+inv k8s.install-kubectl --system
+inv k8s.install-kn --system
 ```
 
 Note that this will place the `kubectl` and `kn` binaries into `/usr/local/bin`,

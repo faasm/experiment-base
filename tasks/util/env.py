@@ -5,6 +5,10 @@ PROJ_ROOT = dirname(dirname(dirname(realpath(__file__))))
 BIN_DIR = join(PROJ_ROOT, "bin")
 GLOBAL_BIN_DIR = "/usr/local/bin"
 
+# Note - this must match the version used by Faasm
+KNATIVE_VERSION = "1.1.0"
+K9S_VERSION = "0.24.15"
+
 ANSIBLE_DIR = join(PROJ_ROOT, "ansible")
 INVENTORY_DIR = join(ANSIBLE_DIR, "inventory")
 INVENTORY_FILE = join(INVENTORY_DIR, "vms.ini")
