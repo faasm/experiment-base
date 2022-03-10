@@ -255,5 +255,5 @@ def ip(ctx, name):
     """
     Show the IP details of a given VM
     """
-    ip = _get_ip()
+    ip = _get_ip(name)
     print(ip)
