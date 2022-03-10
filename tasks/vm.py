@@ -246,7 +246,7 @@ def delete_all(ctx):
     """
     res = _list_all_vms()
     for vm in res:
-        _vm_op("delete", vm["name"], ["--yes"])
+        delete(ctx, vm["name"])
 
 
 @task
