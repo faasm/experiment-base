@@ -1,0 +1,8 @@
+---
+
+- hosts: all
+  become: yes
+  gather_facts: yes
+  tasks:
+    - include_tasks: tasks/base.yml
+    - include_tasks: tasks/docker.yml

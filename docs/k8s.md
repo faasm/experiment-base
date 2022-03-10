@@ -11,5 +11,5 @@ docs](azure.md).
 Check that Ansible can ping the vms:
 
 ```bash
-inv k8s.ansible-ping
+inv k8s.host-ping
 ```

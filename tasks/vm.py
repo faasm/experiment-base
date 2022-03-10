@@ -273,12 +273,14 @@ def ip(ctx, name):
 
 
 @task
-def inventory(ctx, prefix):
+def inventory(ctx, prefix=None):
     """
     Creates ansbile inventory for the VMs with the given name prefix
     """
-    res = _list_all_vms()
-    vms = [v for v in res if v["name"].startswith(prefix)]
+    vms = _list_all_vms()
+
+    if prefix:
+        vms = [v for v in vms if v["name"].startswith(prefix)]
 
     if len(vms) == 0:
         print("Did not find any VMs matching prefix {}".format(prefix))

@@ -9,9 +9,19 @@ from tasks.util.env import (
     GLOBAL_BIN_DIR,
     KNATIVE_VERSION,
     K9S_VERSION,
+    INVENTORY_FILE,
+    ANSIBLE_DIR,
 )
 
 from tasks.util.version import get_k8s_version
+
+
+def _ansible_playbook(playbook):
+    cmd = ["ansible-playbook", "-i {}".format(INVENTORY_FILE), playbook]
+    cmd = " ".join(cmd)
+    print(cmd)
+
+    run(cmd, shell=True, check=True, cwd=ANSIBLE_DIR)
 
 
 def _download_binary(url, binary_name):
@@ -40,6 +50,34 @@ def _symlink_global_bin(binary_path, name):
         check=True,
         cwd=GLOBAL_BIN_DIR,
     )
+
+
+def _check_inventory():
+    if not exists(INVENTORY_FILE):
+        print("Must set up inventory file at {}".format(INVENTORY_FILE))
+        raise RuntimeError("No inventory file found")
+
+
+@task
+def host_ping(ctx, system=False):
+    """
+    Pings hosts from Ansible inventory
+    """
+    _check_inventory()
+
+    cmd = ["ansible", "-i {}".format(INVENTORY_FILE), "all", "-m ping", "-v"]
+    cmd = " ".join(cmd)
+    run(cmd, shell=True, check=True, cwd=ANSIBLE_DIR)
+
+
+@task
+def install(ctx, system=False):
+    """
+    Installs k8s on cluster of machines
+    """
+    _check_inventory()
+
+    _ansible_playbook("k8s.yml")
 
 
 @task

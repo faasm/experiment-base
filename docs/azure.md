@@ -112,9 +112,4 @@ command to generate an Ansible inventory file:
 inv vm.inventory <prefix of your vm names>
 ```
 
-Check that Ansible can ping them:
-
-```bash
-cd ansible
-ansible -i inventory/vms.ini all -m ping -v
-```
+You can then follow the [k8s setup docs](k8s.md).
