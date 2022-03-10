@@ -23,6 +23,22 @@
       debug:
         var: join
 
+    - name: "Create kube dir"
+      delegate_to: localhost
+      file:
+        path: "{{ lookup('env','HOME') }}/.kube"
+        state: directory
+
+    - name: "Run kubectl config command"
+      shell: "microk8s config"
+      register: kubectl_config
+
+    - name: "Download kubectl"
+      delegate_to: localhost
+      copy:
+        content: "{{ kubectl_config.stdout }} "
+        dest: "{{ lookup('env','HOME') }}/.kube/config"
+
 - hosts: worker
   tasks:
     - name: "Run join command from worker"
