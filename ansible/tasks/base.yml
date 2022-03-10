@@ -26,3 +26,12 @@
     update: yes
     clone: yes
     force: yes
+
+- name: "Clone experiments repo"
+  git:
+    repo: "https://www.github.com/faasm/experiment-base.git"
+    dest: "{{ ansible_env.HOME }}/code"
+    depth: 1
+    update: yes
+    clone: yes
+    force: yes

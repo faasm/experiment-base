@@ -97,7 +97,7 @@ inv vm.delete-all
 The size of VMs is determined in the script itself, so you can tweak it there if
 necessary.
 
-Once provisioned, you can set up a VM according to [the docs](vms.md).
+Once provisioned, you can set up a VM according to [the docs](docs/vms.md).
 
 ## Setting up K8s on custom VMs
 
@@ -120,4 +120,4 @@ command to generate an Ansible inventory file:
 inv vm.inventory --prefix <prefix of your vm names>
 ```
 
-You can then follow the [k8s setup docs](k8s.md).
+You can then follow the [k8s setup docs](docs/k8s.md).
