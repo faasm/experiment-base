@@ -17,9 +17,10 @@
 
 - name: "Add user to group"
   become: yes
-  user: name={{ ansible_env.USER }} groups=docker append=yes
+  user: name={{ ansible_ssh_user }} groups=docker append=yes
 
 - name: "Install docker-compose"
+  become: yes
   get_url:
     url: "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-linux-x86_64"
     dest: /usr/local/bin/docker-compose

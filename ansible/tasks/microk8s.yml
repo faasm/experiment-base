@@ -16,11 +16,17 @@
 
 - name: "Add user to group"
   become: yes
-  user: name={{ ansible_env.USER }} groups=microk8s append=yes
+  user: name={{ ansible_ssh_user }} groups=microk8s append=yes
+
+- name: "Print sudo user"
+  become: yes
+  debug:
+    var: ansible_ssh_user
 
 - name: "Change kube dir file permission"
+  become: yes
   file:
-    path: "{{ ansible_env.HOME }}/.kube"
+    path: "/home/{{ ansible_ssh_user }}/.kube"
     owner: "{{ ansible_effective_user_id }}"
     group: "{{ ansible_effective_group_id }}"
     recurse: yes
@@ -33,4 +39,4 @@
   shell: "microk8s status --wait-ready"
 
 - name: "Enable microk8s plugins"
-  shell: "microk8s.enable dns rbac"
+  shell: "microk8s.enable dns rbac ingress"
