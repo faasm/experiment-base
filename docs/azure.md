@@ -97,6 +97,8 @@ inv vm.delete-all
 The size of VMs is determined in the script itself, so you can tweak it there if
 necessary.
 
+Once provisioned, you can set up a VM according to [the docs](vms.md).
+
 ## Setting up K8s on custom VMs
 
 Create as many VMs as you need:

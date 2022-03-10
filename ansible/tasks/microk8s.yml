@@ -13,3 +13,24 @@
     name: microk8s
     classic: yes
     channel: 1.18/stable
+
+- name: "Add user to group"
+  become: yes
+  user: name={{ ansible_env.USER }} groups=microk8s append=yes
+
+- name: "Change kube dir file permission"
+  file:
+    path: "{{ ansible_env.HOME }}/.kube"
+    owner: "{{ ansible_effective_user_id }}"
+    group: "{{ ansible_effective_group_id }}"
+    recurse: yes
+
+- name: "Alias kubectl"
+  become: yes
+  shell: "snap alias microk8s.kubectl kubectl"
+
+- name: "Wait for microk8s to be ready"
+  shell: "microk8s status --wait-ready"
+
+- name: "Enable microk8s plugins"
+  shell: "microk8s.enable dns rbac"

@@ -5,6 +5,8 @@ from os.path import exists
 from datetime import datetime
 import json
 
+from tasks.util.ansible import run_ansible_playbook
+
 from tasks.util.env import (
     AZURE_PUB_SSH_KEY,
     AZURE_SSH_KEY,
@@ -54,7 +56,7 @@ def _list_all_vms():
     res = run(cmd, shell=True, check=True, stdout=PIPE, stdin=PIPE)
 
     res = json.loads(res.stdout)
-    print("Found {} VMs".format(len(res)))
+    print("Found {} total VMs".format(len(res)))
 
     return res
 
@@ -273,11 +275,11 @@ def ip(ctx, name):
 
 
 @task
-def setup(ctx, name):
+def setup(ctx):
     """
     Sets up an individual VM with the basics
     """
-
+    run_ansible_playbook("vm.yml")
 
 
 @task
@@ -285,25 +287,37 @@ def inventory(ctx, prefix=None):
     """
     Creates ansbile inventory for the VMs with the given name prefix
     """
-    vms = _list_all_vms()
+    all_vms = _list_all_vms()
 
     if prefix:
-        vms = [v for v in vms if v["name"].startswith(prefix)]
+        all_vms = [v for v in all_vms if v["name"].startswith(prefix)]
 
-    if len(vms) == 0:
+    if len(all_vms) == 0:
         print("Did not find any VMs matching prefix {}".format(prefix))
         raise RuntimeError("No VMs found with prefix")
+
+    print("Generating inventory for {} VMs".format(len(all_vms)))
+
+    # Sort VMs based on name to ensure consistent choice of main
+    all_vms = sorted(all_vms, key=lambda d: d["name"])
+
+    # Get all IPs
+    for vm in all_vms:
+        vm["public_ip"] = _get_ip(vm["name"])
 
     if not exists(INVENTORY_DIR):
         makedirs(INVENTORY_DIR, exist_ok=True)
 
-    lines = [
-        "[all]",
-    ]
-    for vm in vms:
-        ip = _get_ip(vm["name"])
-        print("Writing IP {} for {}".format(ip, vm["name"]))
-        lines.append(ip)
+    main_vm = all_vms[0]
+    other_vms = all_vms[1:]
+
+    # One group for all VMs, one for main, one for workers
+    lines = ["[all]"]
+    lines.extend([v["public_ip"] for v in all_vms])
+    lines.append("\n[main]")
+    lines.append(main_vm["public_ip"])
+    lines.append("\n[worker]")
+    lines.extend([v["public_ip"] for v in other_vms])
 
     file_content = "\n".join(lines)
 
