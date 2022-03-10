@@ -33,7 +33,10 @@ to pick the `id` field of the one you want, then:
 az account set -s <account_id>
 ```
 
-## Setting up a k8s cluster on Azure
+## Setting up a cluster with AKS
+
+_At the time of writing, AKS only supported Ubuntu 18.04, which is insufficient
+for certain experiments. See below for setting up a cluster on custom VMs._
 
 Provision the cluster with:
 
@@ -76,7 +79,7 @@ inv vm.create
 Delete one:
 
 ```bash
-inv vm.delete <VM_ID>
+inv vm.delete <vm_name>
 ```
 
 Delete all:
@@ -88,3 +91,30 @@ inv vm.delete-all
 The size of VMs is determined in the script itself, so you can tweak it there if
 necessary.
 
+## Setting up K8s on custom VMs
+
+Create as many VMs as you need:
+
+```bash
+inv vm.create -n 4
+```
+
+List them to work out which ones you want to deploy on:
+
+```bash
+inv vm.list
+```
+
+Get the prefix common to all the VMs you want to use, then pass that to the
+command to generate an Ansible inventory file:
+
+```bash
+inv vm.inventory <prefix of your vm names>
+```
+
+Check that Ansible can ping them:
+
+```bash
+cd ansible
+ansible -i inventory/vms.ini all -m ping -v
+```
