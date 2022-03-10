@@ -1,0 +1,15 @@
+---
+
+- name: "Make sure snap is installed"
+  become: yes
+  apt:
+    name:
+      - snapd
+    update_cache: yes
+
+- name: "Install microk8s"
+  become: yes
+  snap:
+    name: microk8s
+    classic: yes
+    channel: 1.18/stable

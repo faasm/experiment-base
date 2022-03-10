@@ -4,6 +4,7 @@ from os import makedirs
 from shutil import copy, rmtree
 from subprocess import run
 
+from tasks.util.ansible import run_ansible_playbook, check_inventory
 from tasks.util.env import (
     BIN_DIR,
     GLOBAL_BIN_DIR,
@@ -14,14 +15,6 @@ from tasks.util.env import (
 )
 
 from tasks.util.version import get_k8s_version
-
-
-def _ansible_playbook(playbook):
-    cmd = ["ansible-playbook", "-i {}".format(INVENTORY_FILE), playbook]
-    cmd = " ".join(cmd)
-    print(cmd)
-
-    run(cmd, shell=True, check=True, cwd=ANSIBLE_DIR)
 
 
 def _download_binary(url, binary_name):
@@ -52,18 +45,12 @@ def _symlink_global_bin(binary_path, name):
     )
 
 
-def _check_inventory():
-    if not exists(INVENTORY_FILE):
-        print("Must set up inventory file at {}".format(INVENTORY_FILE))
-        raise RuntimeError("No inventory file found")
-
-
 @task
 def host_ping(ctx, system=False):
     """
     Pings hosts from Ansible inventory
     """
-    _check_inventory()
+    check_inventory()
 
     cmd = ["ansible", "-i {}".format(INVENTORY_FILE), "all", "-m ping", "-v"]
     cmd = " ".join(cmd)
@@ -75,9 +62,9 @@ def install(ctx, system=False):
     """
     Installs k8s on cluster of machines
     """
-    _check_inventory()
+    check_inventory()
 
-    _ansible_playbook("k8s.yml")
+    run_ansible_playbook("k8s.yml")
 
 
 @task

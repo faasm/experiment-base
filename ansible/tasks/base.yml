@@ -13,9 +13,16 @@
       - linux-generic-hwe-20.04
     update_cache: yes
 
+- name: "Create code dir"
+  file:
+    path: "{{ ansible_env.HOME }}/code"
+    state: directory
+
 - name: "Clone faasm repo"
   git:
     repo: "https://www.github.com/faasm/faasm.git"
     dest: "{{ ansible_env.HOME }}/code"
+    depth: 1
     update: yes
     clone: yes
+    force: yes

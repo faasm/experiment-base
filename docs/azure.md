@@ -76,6 +76,12 @@ Create a new one:
 inv vm.create
 ```
 
+Install basics:
+
+```bash
+inv vm.setup <vm_name>
+```
+
 Delete one:
 
 ```bash
@@ -109,7 +115,7 @@ Get the prefix common to all the VMs you want to use, then pass that to the
 command to generate an Ansible inventory file:
 
 ```bash
-inv vm.inventory <prefix of your vm names>
+inv vm.inventory --prefix <prefix of your vm names>
 ```
 
 You can then follow the [k8s setup docs](k8s.md).

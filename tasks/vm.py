@@ -273,6 +273,14 @@ def ip(ctx, name):
 
 
 @task
+def setup(ctx, name):
+    """
+    Sets up an individual VM with the basics
+    """
+
+
+
+@task
 def inventory(ctx, prefix=None):
     """
     Creates ansbile inventory for the VMs with the given name prefix
