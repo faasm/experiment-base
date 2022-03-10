@@ -1,5 +1,7 @@
 from invoke import task
 from subprocess import run, PIPE, STDOUT
+from os import makedirs
+from os.path import exists
 from datetime import datetime
 import json
 
@@ -13,7 +15,10 @@ from tasks.util.env import (
     AZURE_STANDALONE_VM_SIZE,
     AZURE_SGX_VM_IMAGE,
     AZURE_SGX_VM_SIZE,
+    INVENTORY_DIR,
+    INVENTORY_FILE,
 )
+
 
 # Network components to be deleted, order matters
 VM_NET_COMPONENTS = [
@@ -81,9 +86,9 @@ def _build_ssh_command(ip_addr):
 
 
 @task
-def create(ctx, region=AZURE_REGION, sgx=False, name=None):
+def create(ctx, region=AZURE_REGION, sgx=False, name=None, n=1):
     """
-    Creates a single Azure VM
+    Creates Azure VMs
     """
     if not name:
         timestamp = datetime.now().strftime("%d%m%Y-%H%M%S")
@@ -119,19 +124,27 @@ def create(ctx, region=AZURE_REGION, sgx=False, name=None):
             ]
         )
 
+    if n > 1:
+        cmd.append("--count {}".format(n))
+
     cmd = " ".join(cmd)
     print(cmd)
 
-    res = run(cmd, shell=True, stdout=PIPE, stderr=PIPE)
-    if res.returncode == 0:
-        res = json.loads(res.stdout)
-
-        print("\nTo SSH:")
-        print(_build_ssh_command(res["publicIpAddress"]))
+    if n > 1:
+        # Just run the command if we're creating more than one. Can query info
+        # later
+        run(cmd, shell=True, check=True)
     else:
-        print(res.stderr)
-        print(res.stdout)
-        raise RuntimeError("Failed to provision VM")
+        res = run(cmd, shell=True, stdout=PIPE, stderr=PIPE)
+        if res.returncode == 0:
+            res = json.loads(res.stdout)
+
+            print("\nTo SSH:")
+            print(_build_ssh_command(res["publicIpAddress"]))
+        else:
+            print(res.stderr)
+            print(res.stdout)
+            raise RuntimeError("Failed to provision VM")
 
 
 @task
@@ -257,3 +270,35 @@ def ip(ctx, name):
     """
     ip = _get_ip(name)
     print(ip)
+
+
+@task
+def inventory(ctx, prefix):
+    """
+    Creates ansbile inventory for the VMs with the given name prefix
+    """
+    res = _list_all_vms()
+    vms = [v for v in res if v["name"].startswith(prefix)]
+
+    if len(vms) == 0:
+        print("Did not find any VMs matching prefix {}".format(prefix))
+        raise RuntimeError("No VMs found with prefix")
+
+    if not exists(INVENTORY_DIR):
+        makedirs(INVENTORY_DIR, exist_ok=True)
+
+    lines = [
+        "[all]",
+    ]
+    for vm in vms:
+        ip = _get_ip(vm["name"])
+        print("Writing IP {} for {}".format(ip, vm["name"]))
+        lines.append(ip)
+
+    file_content = "\n".join(lines)
+
+    print("Contents:\n")
+    print(file_content)
+
+    with open(INVENTORY_FILE, "w") as fh:
+        fh.write(file_content)
