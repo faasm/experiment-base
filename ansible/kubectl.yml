@@ -18,3 +18,15 @@
       copy:
         content: "{{ kubectl_config.stdout }} "
         dest: "{{ lookup('env','HOME') }}/.kube/config"
+
+    # The install should be using the internal IPs for the cluster, but we need
+    # to be able to access externally, so we need to set the external IP.
+    # We also need to skip TLS verification as the certificate won't have been
+    # set up to use this external IP, but this is just client-side verification
+    # so it's ok.
+    - name: "Update local kubectl config to work remotely"
+      delegate_to: localhost
+      shell: "kubectl config set-cluster microk8s-cluster {{ item }}"
+      with_items:
+        - "--server=https://{{ groups['main'][0] }}:16443"
+        - "--insecure-skip-tls-verify=true"
