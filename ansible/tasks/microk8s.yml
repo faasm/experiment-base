@@ -39,4 +39,9 @@
 
 - name: "Enable microk8s plugins"
   become: yes
-  shell: "microk8s.enable dns rbac ingress"
+  shell: "microk8s.enable {{ item }}"
+  with_items:
+    - "dns"
+    - "rbac"
+    - "ingress"
+    - "metallb:192.168.1.240-192.168.1.250"

@@ -23,8 +23,8 @@
 
     - name: "Print join command"
       debug:
-        var: join_output.stdout_lines[3]
+        var: join_output.stdout_lines[1]
 
     - name: "Run join command from worker"
       become: yes
-      shell: "{{ join_output.stdout_lines[3] }}"
+      shell: "{{ join_output.stdout_lines[1] }}"
