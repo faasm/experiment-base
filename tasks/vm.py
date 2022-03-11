@@ -353,11 +353,7 @@ def inventory(ctx, prefix=None):
     lines = ["[all]"]
     for v in all_vms:
         # Include VM name for debugging purposes
-        lines.append(
-            "{} \tvm_name={}".format(
-                v["public_ip"], v["name"]
-            )
-        )
+        lines.append("{} \tvm_name={}".format(v["public_ip"], v["name"]))
 
     lines.append("\n[main]")
     lines.append(main_vm["public_ip"])
