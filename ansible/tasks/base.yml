@@ -12,4 +12,3 @@
       - software-properties-common
       - linux-generic-hwe-20.04
     update_cache: yes
-

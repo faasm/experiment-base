@@ -79,7 +79,7 @@ inv vm.create
 Delete one:
 
 ```bash
-inv vm.delete <vm_name>
+inv vm.delete <vm name>
 ```
 
 Delete all:
