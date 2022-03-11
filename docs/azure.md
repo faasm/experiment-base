@@ -114,15 +114,19 @@ inv vm.list
 ```
 
 If you just want to deploy on all the ones that are there, you can run the
-following command without a prefix, otherwise deploy on a subset using their
-shared name prefix:
+following commands without a prefix, otherwise deploy on a subset using their
+shared name prefix.
+
+We have to set up the Ansible inventory, and open the remote kubectl port:
 
 ```bash
 # All VMs
+inv vm.kubectl-port
 inv vm.inventory
 
 # VMs with names starting with prefix
-inv vm.inventory --prefix <prefix of your vm names>
+inv vm.kubectl-port --prefix <vm prefix>
+inv vm.inventory --prefix <vm prefix>
 ```
 
 You can then follow the [k8s setup docs](docs/k8s.md).

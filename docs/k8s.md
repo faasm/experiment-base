@@ -55,6 +55,9 @@ These instructions are only relevant if you're installing k8s on a cluster of
 custom VMs. Managed k8s services like AKS will require their own specific setup
 steps.
 
+*Make sure that all of your VMs have the remote kubectl port open (`16443` at
+the time of writing).*
+
 ### Ansible inventory
 
 You first need to set up an Ansible inventory containing the VMs you want to set
@@ -84,3 +87,11 @@ Once done, you should be able to run the following to update your config to run
 ```bash
 inv k8s.config
 ```
+
+To check you can run:
+
+```bash
+kubectl get nodes
+```
+
+and should see your VMs.

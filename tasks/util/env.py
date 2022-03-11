@@ -19,6 +19,7 @@ AZURE_REGION = "eastus"
 AZURE_STORAGE_SKU = "Standard_LRS"
 
 KUBECTL_BIN = join(PROJ_ROOT, "bin", "kubectl")
+KUBECTL_REMOTE_PORT = 16443
 
 AZURE_PUB_SSH_KEY = "~/.ssh/id_rsa.pub"
 AZURE_SSH_KEY = "~/.ssh/id_rsa"

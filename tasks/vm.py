@@ -19,6 +19,7 @@ from tasks.util.env import (
     AZURE_SGX_VM_SIZE,
     INVENTORY_DIR,
     INVENTORY_FILE,
+    KUBECTL_REMOTE_PORT,
 )
 
 
@@ -46,7 +47,7 @@ def _get_ip(name):
     return vm_info["network"]["publicIpAddresses"][0]["ipAddress"]
 
 
-def _list_all_vms():
+def _list_all_vms(prefix=None):
     cmd = [
         "az vm list",
         "--resource-group {}".format(AZURE_RESOURCE_GROUP),
@@ -56,7 +57,12 @@ def _list_all_vms():
     res = run(cmd, shell=True, check=True, stdout=PIPE, stdin=PIPE)
 
     res = json.loads(res.stdout)
-    print("Found {} total VMs".format(len(res)))
+
+    if prefix:
+        res = [v for v in res if v["name"].startswith(prefix)]
+        print("Found {} VMs with prefix {}".format(len(res), prefix))
+    else:
+        print("Found {} VMs".format(len(res)))
 
     return res
 
@@ -277,20 +283,32 @@ def ip(ctx, name):
 @task
 def setup(ctx):
     """
-    Sets up an individual VM with the basics
+    Set up an individual VM with the basics
     """
     run_ansible_playbook("vm.yml")
 
 
 @task
+def kubectl_port(ctx, prefix=None):
+    """
+    Open the remote kubectl port on VMs
+    """
+    vms = _list_all_vms(prefix)
+
+    for vm in vms:
+        _vm_op(
+            "open-port",
+            vm["name"],
+            extra_args=["--port {}".format(KUBECTL_REMOTE_PORT)],
+        )
+
+
+@task
 def inventory(ctx, prefix=None):
     """
-    Creates ansbile inventory for the VMs with the given name prefix
+    Create ansbile inventory for VMs
     """
-    all_vms = _list_all_vms()
-
-    if prefix:
-        all_vms = [v for v in all_vms if v["name"].startswith(prefix)]
+    all_vms = _list_all_vms(prefix)
 
     if len(all_vms) == 0:
         print("Did not find any VMs matching prefix {}".format(prefix))
