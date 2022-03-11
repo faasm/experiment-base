@@ -293,7 +293,7 @@ def setup(ctx):
 
 
 @task
-def ports(ctx, prefix=None):
+def open_ports(ctx, prefix=None):
     """
     Open ports for Faasm and kubectl on VMs
     """

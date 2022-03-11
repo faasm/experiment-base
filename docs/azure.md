@@ -116,11 +116,11 @@ and kubectl:
 
 ```bash
 # All VMs
-inv vm.ports
+inv vm.open-ports
 inv vm.inventory
 
 # VMs with names starting with prefix
-inv vm.ports --prefix <vm prefix>
+inv vm.open-ports --prefix <vm prefix>
 inv vm.inventory --prefix <vm prefix>
 ```
 

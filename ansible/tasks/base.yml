@@ -8,7 +8,6 @@
       - ca-certificates
       - curl
       - gnupg2
-      - pass
       - software-properties-common
       - linux-generic-hwe-20.04
     update_cache: yes
