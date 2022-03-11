@@ -13,8 +13,8 @@
         path: "{{ lookup('env','HOME') }}/.kube"
         state: directory
 
-    - name: "Download kubectl to faasm config"
+    - name: "Write remote kubectl config locally"
       delegate_to: localhost
       copy:
         content: "{{ kubectl_config.stdout }} "
-        dest: "{{ lookup('env','HOME') }}/.kube"
+        dest: "{{ lookup('env','HOME') }}/.kube/config"
