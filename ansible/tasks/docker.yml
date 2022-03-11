@@ -15,9 +15,12 @@
     name: docker-ce
     update_cache: yes
 
-- name: "Add user to group"
+- name: "Add user to docker group"
   become: yes
-  user: name={{ ansible_ssh_user }} groups=docker append=yes
+  user:
+    name: "{{ ansible_user }}"
+    groups: docker
+    append: yes
 
 - name: "Install docker-compose"
   become: yes

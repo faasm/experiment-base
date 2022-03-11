@@ -15,13 +15,13 @@
 
 - name: "Create code dir"
   file:
-    path: "/home/{{ ansible_ssh_user }}/code"
+    path: "/home/{{ ansible_user }}/code"
     state: directory
 
 - name: "Clone repos"
   git:
     repo: "https://www.github.com/faasm/{{ item }}.git"
-    dest: "/home/{{ ansible_ssh_user }}/code/{{ item }}"
+    dest: "/home/{{ ansible_user }}/code/{{ item }}"
     depth: 1
     update: yes
     clone: yes
