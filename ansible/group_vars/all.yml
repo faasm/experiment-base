@@ -1,0 +1,6 @@
+---
+
+# We just need the XX.YY version here, but assume that it's XX.YY.ZZ in the
+# version file.
+# See: https://microk8s.io/docs/release-notes
+microk8s_version: "{{ lookup('file', '../K8S_VERSION') | splitext | first }}/stable"

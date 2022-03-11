@@ -1,7 +1,11 @@
 from invoke import task
 from subprocess import run, PIPE, STDOUT
+from os import makedirs
+from os.path import exists
 from datetime import datetime
 import json
+
+from tasks.util.ansible import run_ansible_playbook
 
 from tasks.util.env import (
     AZURE_PUB_SSH_KEY,
@@ -13,7 +17,15 @@ from tasks.util.env import (
     AZURE_STANDALONE_VM_SIZE,
     AZURE_SGX_VM_IMAGE,
     AZURE_SGX_VM_SIZE,
+    INVENTORY_DIR,
+    INVENTORY_FILE,
+    KUBECTL_REMOTE_PORT,
+    FAASM_INVOKE_PORT,
+    FAASM_UPLOAD_PORT,
+    K8S_INGRESS_PORT,
+    K8S_NODEPORT_RANGE,
 )
+
 
 # Network components to be deleted, order matters
 VM_NET_COMPONENTS = [
@@ -39,7 +51,7 @@ def _get_ip(name):
     return vm_info["network"]["publicIpAddresses"][0]["ipAddress"]
 
 
-def _list_all_vms():
+def _list_all_vms(prefix=None):
     cmd = [
         "az vm list",
         "--resource-group {}".format(AZURE_RESOURCE_GROUP),
@@ -49,7 +61,12 @@ def _list_all_vms():
     res = run(cmd, shell=True, check=True, stdout=PIPE, stdin=PIPE)
 
     res = json.loads(res.stdout)
-    print("Found {} VMs".format(len(res)))
+
+    if prefix:
+        res = [v for v in res if v["name"].startswith(prefix)]
+        print("Found {} VMs with prefix {}".format(len(res), prefix))
+    else:
+        print("Found {} VMs".format(len(res)))
 
     return res
 
@@ -81,9 +98,9 @@ def _build_ssh_command(ip_addr):
 
 
 @task
-def create(ctx, region=AZURE_REGION, sgx=False, name=None):
+def create(ctx, region=AZURE_REGION, sgx=False, name=None, n=1):
     """
-    Creates a single Azure VM
+    Creates Azure VMs
     """
     if not name:
         timestamp = datetime.now().strftime("%d%m%Y-%H%M%S")
@@ -119,19 +136,27 @@ def create(ctx, region=AZURE_REGION, sgx=False, name=None):
             ]
         )
 
+    if n > 1:
+        cmd.append("--count {}".format(n))
+
     cmd = " ".join(cmd)
     print(cmd)
 
-    res = run(cmd, shell=True, stdout=PIPE, stderr=PIPE)
-    if res.returncode == 0:
-        res = json.loads(res.stdout)
-
-        print("\nTo SSH:")
-        print(_build_ssh_command(res["publicIpAddress"]))
+    if n > 1:
+        # Just run the command if we're creating more than one. Can query info
+        # later
+        run(cmd, shell=True, check=True)
     else:
-        print(res.stderr)
-        print(res.stdout)
-        raise RuntimeError("Failed to provision VM")
+        res = run(cmd, shell=True, stdout=PIPE, stderr=PIPE)
+        if res.returncode == 0:
+            res = json.loads(res.stdout)
+
+            print("\nTo SSH:")
+            print(_build_ssh_command(res["publicIpAddress"]))
+        else:
+            print(res.stderr)
+            print(res.stdout)
+            raise RuntimeError("Failed to provision VM")
 
 
 @task
@@ -257,3 +282,89 @@ def ip(ctx, name):
     """
     ip = _get_ip(name)
     print(ip)
+
+
+@task
+def setup(ctx):
+    """
+    Set up an individual VM with the basics
+    """
+    run_ansible_playbook("vm.yml")
+
+
+@task
+def open_ports(ctx, prefix=None):
+    """
+    Open ports for Faasm and kubectl on VMs
+    """
+    vms = _list_all_vms(prefix)
+
+    ports = ",".join(
+        [
+            str(KUBECTL_REMOTE_PORT),
+            str(FAASM_UPLOAD_PORT),
+            str(FAASM_INVOKE_PORT),
+            str(K8S_INGRESS_PORT),
+            str(K8S_NODEPORT_RANGE),
+        ]
+    )
+
+    # Some default rules are created with priority 1000, which we have to avoid
+    priority = 1600
+
+    for i, vm in enumerate(vms):
+        _vm_op(
+            "open-port",
+            vm["name"],
+            extra_args=[
+                "--port {}".format(ports),
+                "--priority {}".format(priority),
+            ],
+        )
+
+
+@task
+def inventory(ctx, prefix=None):
+    """
+    Create ansbile inventory for VMs
+    """
+    all_vms = _list_all_vms(prefix)
+
+    if len(all_vms) == 0:
+        print("Did not find any VMs matching prefix {}".format(prefix))
+        raise RuntimeError("No VMs found with prefix")
+
+    print("Generating inventory for {} VMs".format(len(all_vms)))
+
+    # Sort VMs based on name to ensure consistent choice of main
+    all_vms = sorted(all_vms, key=lambda d: d["name"])
+
+    # Get all IPs
+    for vm in all_vms:
+        vm["public_ip"] = _get_ip(vm["name"])
+
+    if not exists(INVENTORY_DIR):
+        makedirs(INVENTORY_DIR, exist_ok=True)
+
+    main_vm = all_vms[0]
+    other_vms = all_vms[1:]
+
+    # One group for all VMs, one for main, one for workers
+    lines = ["[all]"]
+    for v in all_vms:
+        # Include VM name for debugging purposes
+        lines.append("{} \tvm_name={}".format(v["public_ip"], v["name"]))
+
+    lines.append("\n[main]")
+    lines.append(main_vm["public_ip"])
+    lines.append("\n[worker]")
+    lines.extend([v["public_ip"] for v in other_vms])
+
+    file_content = "\n".join(lines)
+
+    print("Contents:\n")
+    print(file_content)
+
+    with open(INVENTORY_FILE, "w") as fh:
+        fh.write(file_content)
+        fh.write("\n")

@@ -9,6 +9,7 @@ cloud provider or locally:
 
 - [Azure cluster setup](docs/azure.md).
 - [Local cluster setup](docs/local.md).
+- [Installing and configuring K8s](docs/k8s.md).
 
 ## Setup
 
@@ -24,42 +25,3 @@ pip3 install -r requirements.txt
 inv -l
 ```
 
-You also need to install the correct versions of `kubectl` and `kn`, which can
-be done using the tasks in this repo:
-
-```bash
-inv cluster.install-kubectl --system
-inv cluster.install-kn --system
-```
-
-Note that this will place the `kubectl` and `kn` binaries into `/usr/local/bin`,
-to be available globally. If you just want to use the installs with the tasks in
-this repo, you can drop the `system` flag.
-
-Check `kubectl` gives the right version with:
-
-```bash
-cat K8S_VERSION
-
-which kubectl
-
-kubectl version --client
-```
-
-Check `kn` is working with:
-
-```bash
-which kn
-
-kn version
-```
-
-We also recommend that you install [`k9s`](https://github.com/derailed/k9s) too,
-as it makes managing the cluster much easier than running `kubectl` all the
-time.
-
-```bash
-inv cluster.install-k9s --system
-
-which k9s
-```

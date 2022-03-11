@@ -1,0 +1,30 @@
+---
+
+- hosts: all
+  gather_facts: yes
+  tasks:
+    - include_tasks: tasks/base.yml
+    - include_tasks: tasks/docker.yml
+    - include_tasks: tasks/microk8s.yml
+
+# Each join token is only valid for one host, so we have to run this play once
+# for each (hence serial: 1), generating a token each time on the main host
+- hosts: worker
+  gather_facts: no
+  serial: 1
+  tasks:
+    # Set the TTL on this token to until it's used
+    # https://microk8s.io/docs/command-reference#heading--microk8s-add-node
+    - name: "Run add-node command"
+      become: yes
+      delegate_to: "{{ groups['main'][0] }}"
+      shell: "microk8s add-node --token-ttl -1"
+      register: join_output
+
+    - name: "Print join command"
+      debug:
+        var: join_output.stdout_lines[1]
+
+    - name: "Run join command from worker"
+      become: yes
+      shell: "{{ join_output.stdout_lines[1] }}"

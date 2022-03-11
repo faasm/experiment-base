@@ -5,15 +5,32 @@ PROJ_ROOT = dirname(dirname(dirname(realpath(__file__))))
 BIN_DIR = join(PROJ_ROOT, "bin")
 GLOBAL_BIN_DIR = "/usr/local/bin"
 
+# Note - this must match the version used by Faasm
+KNATIVE_VERSION = "1.1.0"
+K9S_VERSION = "0.24.15"
+
+ANSIBLE_DIR = join(PROJ_ROOT, "ansible")
+INVENTORY_DIR = join(ANSIBLE_DIR, "inventory")
+INVENTORY_FILE = join(INVENTORY_DIR, "vms.ini")
+
 AZURE_RESOURCE_GROUP = "faasm"
 AZURE_REGION = "eastus"
 
 AZURE_STORAGE_SKU = "Standard_LRS"
 
 KUBECTL_BIN = join(PROJ_ROOT, "bin", "kubectl")
+KUBECTL_REMOTE_PORT = 16443
+K8S_INGRESS_PORT = 80
+
+# See k8s docs for default nodeport range
+# https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport
+K8S_NODEPORT_RANGE = "30000-32767"
 
 AZURE_PUB_SSH_KEY = "~/.ssh/id_rsa.pub"
 AZURE_SSH_KEY = "~/.ssh/id_rsa"
+
+FAASM_UPLOAD_PORT = 8002
+FAASM_INVOKE_PORT = 8080
 
 # ----------------------------
 # VM SIZING NOTES

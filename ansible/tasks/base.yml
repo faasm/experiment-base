@@ -1,0 +1,13 @@
+---
+
+- name: "System deps"
+  become: yes
+  apt:
+    name:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - gnupg2
+      - software-properties-common
+      - linux-generic-hwe-20.04
+    update_cache: yes

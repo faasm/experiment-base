@@ -1,0 +1,47 @@
+---
+
+- name: "Make sure snap is installed"
+  become: yes
+  apt:
+    name:
+      - snapd
+    update_cache: yes
+
+- name: "Install microk8s {{ microk8s_version }}"
+  become: yes
+  snap:
+    name: microk8s
+    classic: yes
+    channel: "{{ microk8s_version }}"
+
+- name: "Add user to microk8s group"
+  become: yes
+  user:
+    name: "{{ ansible_user }}"
+    groups: microk8s
+    append: yes
+
+- name: "Change kube dir file permission"
+  become: yes
+  file:
+    path: "/home/{{ ansible_user }}/.kube"
+    owner: "{{ ansible_effective_user_id }}"
+    group: "{{ ansible_effective_group_id }}"
+    recurse: yes
+
+- name: "Alias kubectl"
+  become: yes
+  shell: "snap alias microk8s.kubectl kubectl"
+
+- name: "Wait for microk8s to be ready"
+  become: yes
+  shell: "microk8s status --wait-ready"
+
+- name: "Enable microk8s plugins"
+  become: yes
+  shell: "microk8s.enable {{ item }}"
+  with_items:
+    - "dns"
+    - "rbac"
+    - "ingress"
+    - "metallb:192.168.1.240-192.168.1.250"
