@@ -68,6 +68,16 @@ def install(ctx, system=False):
 
 
 @task
+def config(ctx, system=False):
+    """
+    Updates your local kubectl config to run against the remote deployment
+    """
+    check_inventory()
+
+    run_ansible_playbook("kubectl.yml")
+
+
+@task
 def install_kubectl(ctx, system=False):
     """
     Install the k8s CLI (kubectl)

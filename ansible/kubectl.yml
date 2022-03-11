@@ -1,0 +1,20 @@
+
+---
+
+- hosts: main
+  tasks:
+    - name: "Run kubectl config command"
+      shell: "microk8s config"
+      register: kubectl_config
+
+    - name: "Create kube dir"
+      delegate_to: localhost
+      file:
+        path: "{{ lookup('env','HOME') }}/.kube"
+        state: directory
+
+    - name: "Download kubectl to faasm config"
+      delegate_to: localhost
+      copy:
+        content: "{{ kubectl_config.stdout }} "
+        dest: "{{ lookup('env','HOME') }}/.kube"

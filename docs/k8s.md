@@ -75,6 +75,12 @@ To install Ansible on the hosts listed in the inventory file:
 inv k8s.install
 ```
 
-This will install [microk8s](https://microk8s.io/), check out code, and set up
-`kubectl` from the VM marked as `main` in your inventory file.
+This will use the ansible playbooks defined in the `ansible` directory to
+install and set up k8s, and check out our code.
 
+Once done, you should be able to run the following to update your config to run
+`kubectl`:
+
+```bash
+inv k8s.config
+```

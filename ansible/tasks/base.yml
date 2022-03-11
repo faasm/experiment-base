@@ -18,20 +18,15 @@
     path: "/home/{{ ansible_ssh_user }}/code"
     state: directory
 
-- name: "Clone faasm repo"
+- name: "Clone repos"
   git:
-    repo: "https://www.github.com/faasm/faasm.git"
-    dest: "/home/{{ ansible_ssh_user }}/code/faasm"
+    repo: "https://www.github.com/faasm/{{ item }}.git"
+    dest: "/home/{{ ansible_ssh_user }}/code/{{ item }}"
     depth: 1
     update: yes
     clone: yes
     force: yes
-
-- name: "Clone experiments repo"
-  git:
-    repo: "https://github.com/faasm/experiment-base"
-    dest: "/home/{{ ansible_ssh_user }}/code/experiment-base"
-    depth: 1
-    update: yes
-    clone: yes
-    force: yes
+    accept_hostkey: yes
+  with_items:
+    - "faasm"
+    - "experiment-base"

@@ -113,10 +113,15 @@ List them to work out which ones you want to deploy on:
 inv vm.list
 ```
 
-Get the prefix common to all the VMs you want to use, then pass that to the
-command to generate an Ansible inventory file:
+If you just want to deploy on all the ones that are there, you can run the
+following command without a prefix, otherwise deploy on a subset using their
+shared name prefix:
 
 ```bash
+# All VMs
+inv vm.inventory
+
+# VMs with names starting with prefix
 inv vm.inventory --prefix <prefix of your vm names>
 ```
 

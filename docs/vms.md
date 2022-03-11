@@ -12,5 +12,3 @@ Then you can run:
 ```bash
 inv vm.setup
 ```
-
-
