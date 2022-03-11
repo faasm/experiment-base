@@ -24,6 +24,9 @@ KUBECTL_REMOTE_PORT = 16443
 AZURE_PUB_SSH_KEY = "~/.ssh/id_rsa.pub"
 AZURE_SSH_KEY = "~/.ssh/id_rsa"
 
+FAASM_UPLOAD_PORT = 8002
+FAASM_INVOKE_PORT = 8080
+
 # ----------------------------
 # VM SIZING NOTES
 #

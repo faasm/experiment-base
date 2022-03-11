@@ -20,6 +20,8 @@ from tasks.util.env import (
     INVENTORY_DIR,
     INVENTORY_FILE,
     KUBECTL_REMOTE_PORT,
+    FAASM_INVOKE_PORT,
+    FAASM_UPLOAD_PORT,
 )
 
 
@@ -289,17 +291,31 @@ def setup(ctx):
 
 
 @task
-def kubectl_port(ctx, prefix=None):
+def ports(ctx, prefix=None):
     """
-    Open the remote kubectl port on VMs
+    Open ports for Faasm and kubectl on VMs
     """
     vms = _list_all_vms(prefix)
 
-    for vm in vms:
+    ports = ",".join(
+        [
+            str(KUBECTL_REMOTE_PORT),
+            str(FAASM_UPLOAD_PORT),
+            str(FAASM_INVOKE_PORT),
+        ]
+    )
+
+    # Some default rules are created with priority 1000, which we have to avoid
+    priority = 1500
+
+    for i, vm in enumerate(vms):
         _vm_op(
             "open-port",
             vm["name"],
-            extra_args=["--port {}".format(KUBECTL_REMOTE_PORT)],
+            extra_args=[
+                "--port {}".format(ports),
+                "--priority {}".format(priority),
+            ],
         )
 
 
@@ -331,7 +347,14 @@ def inventory(ctx, prefix=None):
 
     # One group for all VMs, one for main, one for workers
     lines = ["[all]"]
-    lines.extend([v["public_ip"] for v in all_vms])
+    for v in all_vms:
+        # Include VM name for debugging purposes
+        lines.append(
+            "{} \tvm_name={}".format(
+                v["public_ip"], v["name"]
+            )
+        )
+
     lines.append("\n[main]")
     lines.append(main_vm["public_ip"])
     lines.append("\n[worker]")
@@ -344,3 +367,4 @@ def inventory(ctx, prefix=None):
 
     with open(INVENTORY_FILE, "w") as fh:
         fh.write(file_content)
+        fh.write("\n")

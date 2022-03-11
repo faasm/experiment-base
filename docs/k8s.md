@@ -1,5 +1,8 @@
 # Kubernetes setup
 
+All the commands in this file assume you've set up the Python virtual
+environment for this project as per the [README](README.md).
+
 ## Kubectl
 
 Install `kubectl` with:
@@ -55,8 +58,9 @@ These instructions are only relevant if you're installing k8s on a cluster of
 custom VMs. Managed k8s services like AKS will require their own specific setup
 steps.
 
-*Make sure that all of your VMs have the remote kubectl port open (`16443` at
-the time of writing).*
+*Make sure that all of your VMs have the relevant kubectl port open to your
+client machine*. You can check what this is using `kubectl config view` on one
+of the VMs. `16443` is the default at the time of writing.
 
 ### Ansible inventory
 
@@ -81,8 +85,14 @@ inv k8s.install
 This will use the ansible playbooks defined in the `ansible` directory to
 install and set up k8s, and check out our code.
 
-Once done, you should be able to run the following to update your config to run
-`kubectl`:
+This is performing a lot of setup and takes a while depending on the VM type.
+If you see any errors, you can try just rerunning. If that fails, you may find
+the ansible [troubleshooting
+docs](https://docs.ansible.com/ansible/latest/user_guide/playbooks_startnstep.html#)
+useful. You can also try nuking the `~/.ansible` directory and rerunning.
+
+Once k8s is installed, you should be able to run the following to update your
+config to run `kubectl`:
 
 ```bash
 inv k8s.config

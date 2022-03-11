@@ -7,7 +7,7 @@ the associated command:
 inv vm.inventory --prefix <vm name>
 ```
 
-Then you can run:
+Then you can run the following to install the basics:
 
 ```bash
 inv vm.setup

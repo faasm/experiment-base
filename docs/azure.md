@@ -76,12 +76,6 @@ Create a new one:
 inv vm.create
 ```
 
-Install basics:
-
-```bash
-inv vm.setup <vm_name>
-```
-
 Delete one:
 
 ```bash
@@ -117,15 +111,16 @@ If you just want to deploy on all the ones that are there, you can run the
 following commands without a prefix, otherwise deploy on a subset using their
 shared name prefix.
 
-We have to set up the Ansible inventory, and open the remote kubectl port:
+We have to set up the Ansible inventory, and open the ports necessary for Faasm
+and kubectl:
 
 ```bash
 # All VMs
-inv vm.kubectl-port
+inv vm.ports
 inv vm.inventory
 
 # VMs with names starting with prefix
-inv vm.kubectl-port --prefix <vm prefix>
+inv vm.ports --prefix <vm prefix>
 inv vm.inventory --prefix <vm prefix>
 ```
 
