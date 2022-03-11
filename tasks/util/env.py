@@ -20,6 +20,11 @@ AZURE_STORAGE_SKU = "Standard_LRS"
 
 KUBECTL_BIN = join(PROJ_ROOT, "bin", "kubectl")
 KUBECTL_REMOTE_PORT = 16443
+K8S_INGRESS_PORT = 80
+
+# See k8s docs for default nodeport range
+# https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport
+K8S_NODEPORT_RANGE = "30000-32767"
 
 AZURE_PUB_SSH_KEY = "~/.ssh/id_rsa.pub"
 AZURE_SSH_KEY = "~/.ssh/id_rsa"

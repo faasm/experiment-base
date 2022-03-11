@@ -22,6 +22,8 @@ from tasks.util.env import (
     KUBECTL_REMOTE_PORT,
     FAASM_INVOKE_PORT,
     FAASM_UPLOAD_PORT,
+    K8S_INGRESS_PORT,
+    K8S_NODEPORT_RANGE,
 )
 
 
@@ -302,11 +304,13 @@ def ports(ctx, prefix=None):
             str(KUBECTL_REMOTE_PORT),
             str(FAASM_UPLOAD_PORT),
             str(FAASM_INVOKE_PORT),
+            str(K8S_INGRESS_PORT),
+            str(K8S_NODEPORT_RANGE),
         ]
     )
 
     # Some default rules are created with priority 1000, which we have to avoid
-    priority = 1500
+    priority = 1600
 
     for i, vm in enumerate(vms):
         _vm_op(

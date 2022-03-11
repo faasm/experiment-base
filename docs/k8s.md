@@ -3,6 +3,10 @@
 All the commands in this file assume you've set up the Python virtual
 environment for this project as per the [README](README.md).
 
+These instructions are just about setting up k8s tooling, if you have a cluster
+set up with `kubectl` and `kn` working, you can follow the [Faasm k8s
+docs](https://faasm.readthedocs.io/en/latest/source/kubernetes.html).
+
 ## Kubectl
 
 Install `kubectl` with:
