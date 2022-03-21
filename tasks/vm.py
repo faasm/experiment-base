@@ -26,14 +26,28 @@ from tasks.util.env import (
     K8S_NODEPORT_RANGE,
 )
 
-
-# Network components to be deleted, order matters
-VM_NET_COMPONENTS = [
-    ("nic", "VMNic"),
-    ("nsg", "NSG"),
-    ("vnet", "VNET"),
-    ("public-ip", "PublicIp"),
+# Specifies order in which to delete resource types
+RESOURCE_TYPE_PRECEDENCE = [
+    "Microsoft.Network/networkInterfaces",
+    "Microsoft.Network/networkSecurityGroups",
+    "Microsoft.Network/virtualNetworks",
+    "Microsoft.Network/publicIpAddresses",
 ]
+
+
+def _delete_resource(name, resource_type):
+    print("Deleting resource {}".format(name))
+
+    cmd = [
+        "az resource delete",
+        "--resource-group {}".format(AZURE_RESOURCE_GROUP),
+        "--name {}".format(name),
+        "--resource-type {}".format(resource_type),
+    ]
+    cmd = " ".join(cmd)
+    print(cmd)
+
+    run(cmd, check=True, shell=True)
 
 
 def _get_ip(name):
@@ -51,22 +65,18 @@ def _get_ip(name):
     return vm_info["network"]["publicIpAddresses"][0]["ipAddress"]
 
 
-def _list_all_vms(prefix=None):
+def _list_all(azure_cmd, prefix=None):
     cmd = [
-        "az vm list",
+        "az {} list".format(azure_cmd),
         "--resource-group {}".format(AZURE_RESOURCE_GROUP),
     ]
     cmd = " ".join(cmd)
 
     res = run(cmd, shell=True, check=True, stdout=PIPE, stdin=PIPE)
-
     res = json.loads(res.stdout)
 
     if prefix:
         res = [v for v in res if v["name"].startswith(prefix)]
-        print("Found {} VMs with prefix {}".format(len(res), prefix))
-    else:
-        print("Found {} VMs".format(len(res)))
 
     return res
 
@@ -93,25 +103,76 @@ def _vm_op(op, name, extra_args=None, capture=False):
         run(cmd, shell=True, check=True)
 
 
+def _delete_vms(vms):
+    print("Deleting {} VMs".format(len(vms)))
+    for vm in vms:
+        _vm_op("delete", vm, extra_args=["--yes"])
+
+
+def _delete_resources(resources):
+    print("Deleting {} resources".format(len(resources)))
+
+    deleted_resources = list()
+
+    # Prioritise certain types
+    for t in RESOURCE_TYPE_PRECEDENCE:
+        to_delete = [r for r in resources if r["type"] == t]
+
+        if to_delete:
+            print(
+                "Prioritising {} resources of type {}".format(
+                    len(to_delete), t
+                )
+            )
+
+        for r in to_delete:
+            _delete_resource(r["name"], r["type"])
+            deleted_resources.append(r["id"])
+
+    remaining = [r for r in resources if r["id"] not in deleted_resources]
+    for r in remaining:
+        _delete_resource(r["name"], r["type"])
+
+
 def _build_ssh_command(ip_addr):
     return "ssh -A -i {} {}@{}".format(AZURE_SSH_KEY, AZURE_VM_ADMIN, ip_addr)
 
 
-@task
-def create(ctx, region=AZURE_REGION, sgx=False, name=None, n=1):
+@task(
+    help={
+        "n": "Number of VM instances",
+        "name": "Name to be given to the VM(s)",
+        "region": "Azure region",
+        "sgx": "Enable SGX",
+        "size": "Azure VM size",
+    }
+)
+def create(ctx, size=None, region=AZURE_REGION, sgx=False, name=None, n=1):
     """
     Creates Azure VMs
     """
+    # WARNING: we rely on a name ending in an integer to detect whether it's
+    # been created by Azure in bulk. Therefore, don't have this base name end
+    # in an integer
     if not name:
         timestamp = datetime.now().strftime("%d%m%Y-%H%M%S")
-        name = "faasm-vm{}-{}".format("-sgx" if sgx else "", timestamp)
+        name = "faasm{}-{}-vm".format("-sgx" if sgx else "", timestamp)
+
+    # Set VM image and size
+    vm_image = AZURE_SGX_VM_IMAGE if sgx else AZURE_VM_IMAGE
+    vm_size = AZURE_SGX_VM_SIZE if sgx else AZURE_STANDALONE_VM_SIZE
+
+    if size:
+        vm_size = size
 
     print(
-        "Creating VM {}, size {}, region {}".format(
-            name, AZURE_STANDALONE_VM_SIZE, region
+        "Creating {} VMs: name={} type={} region={} image={}".format(
+            n, name, vm_size, region, vm_image
         )
     )
 
+    # Note here how we specify that we want to delete the associted resources:
+    # https://docs.microsoft.com/en-us/azure/virtual-machines/delete?tabs=cli2
     cmd = [
         "az vm create",
         "--resource-group {}".format(AZURE_RESOURCE_GROUP),
@@ -119,22 +180,13 @@ def create(ctx, region=AZURE_REGION, sgx=False, name=None, n=1):
         "--admin-username {}".format(AZURE_VM_ADMIN),
         "--location {}".format(region),
         "--ssh-key-value {}".format(AZURE_PUB_SSH_KEY),
+        "--image {}".format(vm_image),
+        "--size {}".format(vm_size),
+        "--public-ip-sku Standard",
+        "--os-disk-delete-option delete",
+        "--data-disk-delete-option delete",
+        "--nic-delete-option delete",
     ]
-
-    if sgx:
-        cmd.extend(
-            [
-                "--image {}".format(AZURE_SGX_VM_IMAGE),
-                "--size {}".format(AZURE_SGX_VM_SIZE),
-            ]
-        )
-    else:
-        cmd.extend(
-            [
-                "--image {}".format(AZURE_VM_IMAGE),
-                "--size {}".format(AZURE_STANDALONE_VM_SIZE),
-            ]
-        )
 
     if n > 1:
         cmd.append("--count {}".format(n))
@@ -204,67 +256,57 @@ def delete(ctx, name):
     """
     Deletes the given Azure VM
     """
-    # Get OS disk name
-    disk_out = _vm_op(
-        "show",
-        name,
-        [
-            "--query storageProfile.osDisk.managedDisk.id",
-        ],
-        capture=True,
-    )
-    os_disk = disk_out.split("/")[-1][:-2]
+    # If we've created VMs in bulk, they will have slightly different naming
+    # conventions to those created individually.
+    # If created in bulk, Azure will have added an extra integer to the end of
+    # the name, which we can look for
+    last_char = name[-1]
+    is_bulk = last_char.isnumeric()
+    base_name = name
+
+    if is_bulk:
+        bulk_idx = last_char
+        base_name = name[:-1]
+
+        print(
+            "Assuming {} created in bulk (idx {}, base {})".format(
+                name, bulk_idx, base_name
+            )
+        )
 
     # Delete the VM itself
-    _vm_op("delete", name, ["--yes"])
+    _delete_vms([name])
 
-    # Delete OS disk
-    delete_disk_cmd = [
-        "az disk delete",
-        "--resource-group {}".format(AZURE_RESOURCE_GROUP),
-        "--name {}".format(os_disk),
-        "--yes",
-    ]
-
-    delete_disk_cmd = " ".join(delete_disk_cmd)
-    print(delete_disk_cmd)
-    run(
-        delete_disk_cmd,
-        check=True,
-        shell=True,
-    )
-
-    # Delete all the network components
-    for component, suffix in VM_NET_COMPONENTS:
-        cmd = [
-            "az",
-            "network {}".format(component),
-            "delete",
-            "--resource-group {}".format(AZURE_RESOURCE_GROUP),
-            "--name {}{}".format(name, suffix),
-        ]
-
-        cmd = " ".join(cmd)
-        print(cmd)
-        run(cmd, shell=True, check=True)
+    # Delete all other resources associated with it that may be left
+    all_resources = _list_all("resource", prefix=base_name)
+    _delete_resources(all_resources)
 
 
 @task
-def delete_all(ctx):
+def delete_all(ctx, prefix=None):
     """
-    Deletes all the Azure VMs
+    Deletes any Azure VMs and associated resources with the given prefix
     """
-    res = _list_all_vms()
-    for vm in res:
-        delete(ctx, vm["name"])
+    # VMs may be created in groups and share resources e.g. a VNET, so we need
+    # to delete all the VMs first, then clear up whatever is left
+    res = _list_all("vm", prefix=prefix)
+
+    # Delete the VMs themselves
+    _delete_vms([r["name"] for r in res])
+
+    # Delete all other resources that may be left over
+    all_resources = _list_all("resource", prefix=prefix)
+    _delete_resources(all_resources)
 
 
 @task
-def list(ctx):
+def list_all(ctx):
     """
     List all Azure VMs
     """
-    res = _list_all_vms()
+    res = _list_all("vm")
+    print("Found {} vms:\n".format(len(res)))
+
     for vm in res:
         print(
             "{}: {} {}".format(
@@ -297,7 +339,7 @@ def open_ports(ctx, prefix=None):
     """
     Open ports for Faasm and kubectl on VMs
     """
-    vms = _list_all_vms(prefix)
+    vms = _list_all("vm", prefix)
 
     ports = ",".join(
         [
@@ -328,7 +370,7 @@ def inventory(ctx, prefix=None):
     """
     Create ansbile inventory for VMs
     """
-    all_vms = _list_all_vms(prefix)
+    all_vms = _list_all("vm", prefix)
 
     if len(all_vms) == 0:
         print("Did not find any VMs matching prefix {}".format(prefix))
