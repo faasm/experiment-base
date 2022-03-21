@@ -67,7 +67,7 @@ inv cluster.delete
 List any in existence:
 
 ```bash
-inv vm.list
+inv vm.list-all
 ```
 
 Create a new one:
@@ -79,13 +79,18 @@ inv vm.create
 Delete one:
 
 ```bash
+# Delete a specific VM and associated resources
 inv vm.delete <vm name>
 ```
 
 Delete all:
 
 ```bash
+# Delete all VMs and resources
 inv vm.delete-all
+
+# Delete all VMs and resources with given prefix
+inv vm.delete-all --prefix <some prefix>
 ```
 
 The size of VMs is determined in the script itself, so you can tweak it there if
@@ -104,7 +109,7 @@ inv vm.create -n 4
 List them to work out which ones you want to deploy on:
 
 ```bash
-inv vm.list
+inv vm.list-all
 ```
 
 If you just want to deploy on all the ones that are there, you can run the
