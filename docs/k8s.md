@@ -108,4 +108,6 @@ To check you can run:
 kubectl get nodes
 ```
 
-and should see your VMs.
+and should see your VMs. If it doesn't work, make sure the right ports are open
+on your VMs (if running on Azure, you can see the [Azure docs](docs/azure.md) for how
+to do this).
