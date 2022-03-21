@@ -103,10 +103,10 @@ def _build_ssh_command(ip_addr):
         "name": "Name to be given to the VM(s)",
         "region": "Azure region",
         "sgx": "Enable SGX",
-        "vm": "Azure VM type",
+        "size": "Azure VM size",
     }
 )
-def create(ctx, vm=None, region=AZURE_REGION, sgx=False, name=None, n=1):
+def create(ctx, size=None, region=AZURE_REGION, sgx=False, name=None, n=1):
     """
     Creates Azure VMs
     """
@@ -118,18 +118,16 @@ def create(ctx, vm=None, region=AZURE_REGION, sgx=False, name=None, n=1):
         timestamp = datetime.now().strftime("%d%m%Y-%H%M%S")
         name = "faasm{}-{}-vm".format("-sgx" if sgx else "", timestamp)
 
-    vm_image = AZURE_VM_IMAGE
-    vm_type = AZURE_STANDALONE_VM_SIZE
+    # Set VM image and size
+    vm_image = AZURE_SGX_VM_IMAGE if sgx else AZURE_VM_IMAGE
+    vm_size = AZURE_SGX_VM_SIZE if sgx else AZURE_STANDALONE_VM_SIZE
 
-    if vm:
-        vm_type = vm
-    elif sgx:
-        vm_image = AZURE_SGX_VM_IMAGE
-        vm_type = AZURE_SGX_VM_SIZE
+    if size:
+        vm_size = size
 
     print(
         "Creating {} VMs: name={} type={} region={} image={}".format(
-            n, name, vm_type, region, vm_image
+            n, name, vm_size, region, vm_image
         )
     )
 
@@ -143,7 +141,7 @@ def create(ctx, vm=None, region=AZURE_REGION, sgx=False, name=None, n=1):
         "--location {}".format(region),
         "--ssh-key-value {}".format(AZURE_PUB_SSH_KEY),
         "--image {}".format(vm_image),
-        "--size {}".format(vm_type),
+        "--size {}".format(vm_size),
         "--public-ip-sku Standard",
         "--os-disk-delete-option delete",
         "--data-disk-delete-option delete",
@@ -249,12 +247,12 @@ def delete(ctx, name):
 @task
 def delete_all(ctx, prefix=None):
     """
-    Deletes all the Azure resources with the given prefix
+    Deletes all the Azure VMs with the given prefix
     """
-    res = _list_all("resource", prefix=prefix)
+    res = _list_all("vm", prefix=prefix)
     for r in res:
-        print("Deleting {} ({})".format(r["name"], r["type"]))
-        _delete_resource(r["name"], r["type"])
+        print("Deleting VM {}".format(r["name"]))
+        delete(ctx, r["name"])
 
 
 @task
