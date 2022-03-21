@@ -3,8 +3,13 @@
 All the commands in this file assume you've set up the Python virtual
 environment for this project as per the [README](README.md).
 
-These instructions are just about setting up k8s tooling, if you have a cluster
-set up with `kubectl` and `kn` working, you can follow the [Faasm k8s
+These instructions desribe:
+
+- Setting up k8s tooling like `kubectl` and `kn`
+- Setting up a k8s cluster on VMs
+
+If you already have a cluster set up with `kubectl` and `kn` working, you can
+just follow the [Faasm k8s
 docs](https://faasm.readthedocs.io/en/latest/source/kubernetes.html).
 
 ## Kubectl
@@ -109,5 +114,9 @@ kubectl get nodes
 ```
 
 and should see your VMs. If it doesn't work, make sure the right ports are open
-on your VMs (if running on Azure, you can see the [Azure docs](docs/azure.md) for how
-to do this).
+on your VMs (if running on Azure, you can see the [Azure docs](docs/azure.md)
+for how to do this).
+
+Once running, you can follow the [Faasm k8s
+docs](https://faasm.readthedocs.io/en/latest/source/kubernetes.html) to set up
+Faasm.
