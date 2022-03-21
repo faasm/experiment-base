@@ -26,6 +26,14 @@ from tasks.util.env import (
     K8S_NODEPORT_RANGE,
 )
 
+# Specifies order in which to delete resource types
+RESOURCE_TYPE_PRECEDENCE = [
+    "Microsoft.Network/networkInterfaces",
+    "Microsoft.Network/networkSecurityGroups",
+    "Microsoft.Network/virtualNetworks",
+    "Microsoft.Network/publicIpAddresses",
+]
+
 
 def _delete_resource(name, resource_type):
     print("Deleting resource {}".format(name))
@@ -66,7 +74,9 @@ def _list_all(azure_cmd, prefix=None):
 
     res = run(cmd, shell=True, check=True, stdout=PIPE, stdin=PIPE)
     res = json.loads(res.stdout)
-    res = [v for v in res if v["name"].startswith(prefix)]
+
+    if prefix:
+        res = [v for v in res if v["name"].startswith(prefix)]
 
     return res
 
@@ -93,6 +103,37 @@ def _vm_op(op, name, extra_args=None, capture=False):
         run(cmd, shell=True, check=True)
 
 
+def _delete_vms(vms):
+    print("Deleting {} VMs".format(len(vms)))
+    for vm in vms:
+        _vm_op("delete", vm, extra_args=["--yes"])
+
+
+def _delete_resources(resources):
+    print("Deleting {} resources".format(len(resources)))
+
+    deleted_resources = list()
+
+    # Prioritise certain types
+    for t in RESOURCE_TYPE_PRECEDENCE:
+        to_delete = [r for r in resources if r["type"] == t]
+
+        if to_delete:
+            print(
+                "Prioritising {} resources of type {}".format(
+                    len(to_delete), t
+                )
+            )
+
+        for r in to_delete:
+            _delete_resource(r["name"], r["type"])
+            deleted_resources.append(r["id"])
+
+    remaining = [r for r in resources if r["id"] not in deleted_resources]
+    for r in remaining:
+        _delete_resource(r["name"], r["type"])
+
+
 def _build_ssh_command(ip_addr):
     return "ssh -A -i {} {}@{}".format(AZURE_SSH_KEY, AZURE_VM_ADMIN, ip_addr)
 
@@ -110,7 +151,6 @@ def create(ctx, size=None, region=AZURE_REGION, sgx=False, name=None, n=1):
     """
     Creates Azure VMs
     """
-
     # WARNING: we rely on a name ending in an integer to detect whether it's
     # been created by Azure in bulk. Therefore, don't have this base name end
     # in an integer
@@ -146,7 +186,6 @@ def create(ctx, size=None, region=AZURE_REGION, sgx=False, name=None, n=1):
         "--os-disk-delete-option delete",
         "--data-disk-delete-option delete",
         "--nic-delete-option delete",
-        "--ip-delete-option delete",
     ]
 
     if n > 1:
@@ -236,31 +275,38 @@ def delete(ctx, name):
         )
 
     # Delete the VM itself
-    _vm_op("delete", name, ["--yes"])
+    _delete_vms([name])
 
     # Delete all other resources associated with it that may be left
     all_resources = _list_all("resource", prefix=base_name)
-    for r in all_resources:
-        _delete_resource(r["name"], r["type"])
+    _delete_resources(all_resources)
 
 
 @task
 def delete_all(ctx, prefix=None):
     """
-    Deletes all the Azure VMs with the given prefix
+    Deletes any Azure VMs and associated resources with the given prefix
     """
+    # VMs may be created in groups and share resources e.g. a VNET, so we need
+    # to delete all the VMs first, then clear up whatever is left
     res = _list_all("vm", prefix=prefix)
-    for r in res:
-        print("Deleting VM {}".format(r["name"]))
-        delete(ctx, r["name"])
+
+    # Delete the VMs themselves
+    _delete_vms([r["name"] for r in res])
+
+    # Delete all other resources that may be left over
+    all_resources = _list_all("resource", prefix=prefix)
+    _delete_resources(all_resources)
 
 
 @task
-def list(ctx):
+def list_all(ctx):
     """
     List all Azure VMs
     """
     res = _list_all("vm")
+    print("Found {} vms:\n".format(len(res)))
+
     for vm in res:
         print(
             "{}: {} {}".format(
