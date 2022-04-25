@@ -15,9 +15,7 @@
       - python3-venv
     update_cache: yes
 
-- name: "Install python modules"
+- name: "Update pip"
   become: yes
-  shell: "pip3 install -U {{ item }}"
-  with_items:
-    - "pip"
+  shell: "pip3 install -U pip"
 
