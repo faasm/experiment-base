@@ -129,4 +129,4 @@ inv vm.open-ports --prefix <vm prefix>
 inv vm.inventory --prefix <vm prefix>
 ```
 
-You can then follow the [k8s setup docs](docs/k8s.md).
+You can then follow the [k8s setup docs](k8s.md).

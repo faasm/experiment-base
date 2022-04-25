@@ -10,4 +10,14 @@
       - gnupg2
       - software-properties-common
       - linux-generic-hwe-20.04
+      - python3-dev
+      - python3-pip
+      - python3-venv
     update_cache: yes
+
+- name: "Install python modules"
+  become: yes
+  shell: "pip3 install -U {{ item }}"
+  with_items:
+    - "pip"
+

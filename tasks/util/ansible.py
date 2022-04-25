@@ -12,6 +12,8 @@ def check_inventory():
         print("Must set up inventory file at {}".format(INVENTORY_FILE))
         raise RuntimeError("No inventory file found")
 
+    return INVENTORY_FILE
+
 
 def run_ansible_playbook(playbook):
     check_inventory()
