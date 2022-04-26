@@ -50,7 +50,8 @@ def host_ping(ctx, system=False):
     """
     Pings hosts from Ansible inventory
     """
-    check_inventory()
+    inventory_file = check_inventory()
+    print("Checking each host defined in {}".format(inventory_file))
 
     cmd = ["ansible", "-i {}".format(INVENTORY_FILE), "all", "-m ping", "-v"]
     cmd = " ".join(cmd)

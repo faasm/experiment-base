@@ -11,9 +11,19 @@
     dest: "/home/{{ ansible_user }}/code/{{ item }}"
     depth: 1
     update: yes
+    recursive: no
     clone: yes
     force: yes
     accept_hostkey: yes
   with_items:
     - "faasm"
     - "experiment-base"
+
+- name: "Clone specific Faasm submodules"
+  shell: "git submodule update --init {{ item }}"
+  args:
+    chdir: "/home/{{ ansible_user }}/code/faasm"
+  with_items:
+    - "clients/cpp"
+    - "clients/python"
+

@@ -68,8 +68,13 @@ custom VMs. Managed k8s services like AKS will require their own specific setup
 steps.
 
 *Make sure that all of your VMs have the relevant kubectl port open to your
-client machine*. You can check what this is using `kubectl config view` on one
-of the VMs. `16443` is the default at the time of writing.
+client machine*. You can check what port this by running:
+
+```
+kubectl config view
+```
+
+on your client machine. It's `16443` is the default at the time of writing.
 
 ### Ansible inventory
 

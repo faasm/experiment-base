@@ -1,7 +1,12 @@
 # Running on individual VMs
 
-To set up the basics, you first need to update the Anisble inventory file using
-the associated command:
+First you need to pick your VM from the list:
+
+```bash
+inv vm.list-all
+```
+
+Then you need to update the Anisble inventory file:
 
 ```bash
 inv vm.inventory --prefix <vm name>
