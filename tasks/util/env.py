@@ -38,26 +38,36 @@ FAASM_INVOKE_PORT = 8080
 # For hacking around, the standard A-series VMs are fine (although very slow)
 # https://docs.microsoft.com/en-us/azure/virtual-machines/av2-series
 #
-# e.g. Standard_A8_v2: 8 cores, 16GB mem
+# e.g. Standard_A8_v2: 8 vCPUs, 16GiB
 #
 # For something a little faster, e.g. testing out experiment configurations,
 # a smaller D-series VM works:
 #
-# e.g. Standard_D8_v5: 8 cores, 28GB mem
+# e.g. Standard_D8_v5: 8 vCPUs, 28GiB
 #
 # For single VM benchmarks and cluster experiments, bigger D-series machines
-# are more appropriate (but more expensive).
-# https://docs.microsoft.com/en-us/azure/virtual-machines/dv3-dsv3-series
+# are more appropriate, BUT, they use hyperthreading and native MT benchmarks
+# will not scale smoothly on hyperthreaded cores:
 #
-# e.g. Standard_D16_v5: 16 cores, 64GB mem
-# e.g. Standard_D32_v5: 32 cores, 128GB mem
+# e.g. Standard_D16_v5: 16 vCPUs, 64GiB
+# e.g. Standard_D32_v5: 32 vCPUs, 128GiB
 #
+# Non-hyper-threaded machines include older D-series and newer H-series
+# machines:
+#
+# e.g. Standard_H16: 16 vCPUs, 112GiB
+# e.g. Standard_D5_v2: 16 vCPUs, 56GiB
+#
+# Links:
+# - Newer D-series: https://docs.microsoft.com/en-us/azure/virtual-machines/dv5-dsv5-series
+# - Older D-series (no HT): https://docs.microsoft.com/en-us/azure/virtual-machines/dv2-dsv2-series
+# - H-series (no HT): https://docs.microsoft.com/en-us/azure/virtual-machines/h-series
 # ---------------------------
 
 AZURE_VM_ADMIN = "faasm"
 AZURE_VM_IMAGE = "Canonical:0001-com-ubuntu-server-focal:20_04-lts:latest"
 
-AZURE_STANDALONE_VM_SIZE = "Standard_D16_v5"
+AZURE_STANDALONE_VM_SIZE = "Standard_D5_v2"
 
 AZURE_SGX_VM_IMAGE = "Canonical:UbuntuServer:18_04-lts-gen2:18.04.202109180"
 AZURE_SGX_VM_SIZE = "Standard_DC4s_v3"
@@ -67,6 +77,6 @@ AZURE_SGX_VM_SIZE = "Standard_DC4s_v3"
 # ----------------------------
 
 AZURE_K8S_CLUSTER_NAME = "faasm-cluster"
-AZURE_K8S_VM_SIZE = "Standard_D16_v5"
+AZURE_K8S_VM_SIZE = "Standard_D5_v2"
 AZURE_K8S_NODE_COUNT = 4
 AZURE_K8S_REGION = "eastus"
