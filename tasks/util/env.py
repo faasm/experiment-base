@@ -70,3 +70,19 @@ AZURE_K8S_CLUSTER_NAME = "faasm-cluster"
 AZURE_K8S_VM_SIZE = "Standard_D16_v5"
 AZURE_K8S_NODE_COUNT = 4
 AZURE_K8S_REGION = "eastus"
+
+# ----------------------------
+# Azure Batch Service
+# ----------------------------
+
+AZURE_BATCH_ACCOUNT_NAME = "faasmbatch"
+AZURE_BATCH_POOL_ID = "faasmpool"
+AZURE_BATCH_NODE_AGENT_SKU_ID = "batch.node.ubuntu 18.04"
+AZURE_BATCH_NODE_COUNT = AZURE_K8S_NODE_COUNT
+AZURE_BATCH_REGION = AZURE_K8S_REGION
+# Use Ubuntu 18.04 as this is what the K8S cluster uses
+AZURE_BATCH_VM_IMAGE = "Canonical:UbuntuServer:18.04-LTS:18.04.202204010"
+# Ideally the VM size would be the same than the K8S node, however Dv5s are not
+# supported in Batch:
+# https://docs.microsoft.com/en-us/azure/batch/batch-pool-vm-sizes
+AZURE_BATCH_VM_SIZE = "Standard_D16_v3"

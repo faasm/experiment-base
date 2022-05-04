@@ -2,6 +2,7 @@ from ast import literal_eval
 from invoke import task
 from subprocess import check_output, run
 from tasks.util.env import (
+    AZURE_REGION,
     AZURE_RESOURCE_GROUP,
     AZURE_STORAGE_SKU,
 )
@@ -33,7 +34,7 @@ def account_key(ctx, name):
 
 
 @task
-def create_account(ctx, name, sku=AZURE_STORAGE_SKU):
+def create_account(ctx, name, sku=AZURE_STORAGE_SKU, location=AZURE_REGION):
     """
     Create storage account
     """
@@ -43,6 +44,7 @@ def create_account(ctx, name, sku=AZURE_STORAGE_SKU):
         "--resource-group {}".format(AZURE_RESOURCE_GROUP),
         "--name {}".format(name),
         "--sku {}".format(sku),
+        "--location {}".format(AZURE_REGION),
     ]
 
     cmd = " ".join(cmd)
@@ -61,6 +63,7 @@ def delete_account(ctx, name):
         "storage account delete",
         "--resource-group {}".format(AZURE_RESOURCE_GROUP),
         "--name {}".format(name),
+        "--yes",
     ]
 
     cmd = " ".join(cmd)
