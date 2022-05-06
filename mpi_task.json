@@ -1,0 +1,15 @@
+{
+  "commandLine": "/bin/bash -c 'mpirun -n 64 -hosts $AZ_BATCH_HOST_LIST $AZ_BATCH_TASK_SHARED_DIR/hellompi'",
+  "id": "faasmtask",
+  "multiInstanceSettings": {
+    "numberOfInstances": 4,
+    "coordinationCommandLine": "/bin/bash -c 'mpicc $AZ_BATCH_TASK_SHARED_DIR/hellompi.cpp -o $AZ_BATCH_TASK_SHARED_DIR/hellompi'",
+    "commonResourceFiles": {
+      "blobSource": "https://faasmbatchstorage.blob.core.windows.net/input/hellompi.cpp",
+      "filePath": "hellompi.cpp"
+    }
+  },
+  "outputFiles": null,
+  "requiredSlots": 1
+}
+

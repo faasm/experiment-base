@@ -76,10 +76,12 @@ AZURE_K8S_REGION = "eastus"
 # ----------------------------
 
 AZURE_BATCH_ACCOUNT_NAME = "faasmbatch"
+AZURE_BATCH_JOB_NAME = "faasmjob"
 AZURE_BATCH_POOL_ID = "faasmpool"
 AZURE_BATCH_NODE_AGENT_SKU_ID = "batch.node.ubuntu 18.04"
 AZURE_BATCH_NODE_COUNT = AZURE_K8S_NODE_COUNT
 AZURE_BATCH_REGION = AZURE_K8S_REGION
+AZURE_BATCH_STORAGE_CONTAINERS = ["input", "output"]
 # Use Ubuntu 18.04 as this is what the K8S cluster uses
 AZURE_BATCH_VM_IMAGE = "Canonical:UbuntuServer:18.04-LTS:18.04.202204010"
 # Ideally the VM size would be the same than the K8S node, however Dv5s are not

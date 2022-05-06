@@ -34,7 +34,7 @@ def account_key(ctx, name):
 
 
 @task
-def create_account(ctx, name, sku=AZURE_STORAGE_SKU, location=AZURE_REGION):
+def account_create(ctx, name, sku=AZURE_STORAGE_SKU, location=AZURE_REGION):
     """
     Create storage account
     """
@@ -54,7 +54,7 @@ def create_account(ctx, name, sku=AZURE_STORAGE_SKU, location=AZURE_REGION):
 
 
 @task
-def delete_account(ctx, name):
+def account_delete(ctx, name):
     """
     Delete storage account
     """
@@ -73,7 +73,7 @@ def delete_account(ctx, name):
 
 
 @task
-def create_container(ctx, name):
+def container_create(ctx, account_name, container_name):
     """
     Create storage container
     """
@@ -81,9 +81,9 @@ def create_container(ctx, name):
         "az",
         "storage container create",
         "--resource-group {}".format(AZURE_RESOURCE_GROUP),
-        "--account-name {}".format(name),
-        "--account-key {}".format(_get_account_key(name)),
-        "--name storage",
+        "--account-name {}".format(account_name),
+        "--account-key {}".format(_get_account_key(account_name)),
+        "--name {}".format(container_name),
     ]
 
     cmd = " ".join(cmd)
@@ -93,20 +93,41 @@ def create_container(ctx, name):
 
 
 @task
-def delete_container(ctx, name):
+def container_delete(ctx, account_name, container_name):
     """
     Delete storage account
     """
     cmd = [
         "az",
         "storage container delete",
-        "--resource-group {}".format(AZURE_RESOURCE_GROUP),
-        "--account-name {}".format(name),
-        "--account-key {}".format(_get_account_key(name)),
-        "--name storage",
+        "--account-name {}".format(account_name),
+        "--account-key {}".format(_get_account_key(account_name)),
+        "--name {}".format(container_name),
     ]
 
     cmd = " ".join(cmd)
     print(cmd)
 
     run(cmd, shell=True, check=True)
+
+
+@task
+def container_file_upload(ctx, account_name, container_name, file_path):
+    cmd = [
+        "az storage blob upload",
+        "--account-name {}".format(account_name),
+        "--account-key {}".format(_get_account_key(account_name)),
+        "--container-name {}".format(container_name),
+        "--file {}".format(file_path),
+    ]
+
+    cmd = " ".join(cmd)
+    print(cmd)
+    run(cmd, shell=True, check=True)
+
+    cmd = [
+        "az storage blob url",
+        "--account-name {}".format(account_name),
+        "--account-key {}".format(_get_account_key(account_name)),
+        "--container-name {}".format(container_name),
+    ]

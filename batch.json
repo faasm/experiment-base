@@ -1,0 +1,35 @@
+{
+  "id": "faasmpool",
+  "startTask": {
+    "commandLine": "/bin/sh -c \"apt-get update; apt-get -y install openmpi-bin\"",
+    "maxTaskRetryCount": 0,
+    "resourceFiles": null,
+    "userIdentity": {
+      "autoUser": {
+        "elevationLevel": "admin",
+        "scope": "pool"
+      },
+      "userName": null
+    },
+    "waitForSuccess": true
+  },
+  "targetDedicatedNodes": 4,
+  "targetLowPriorityNodes": 0,
+  "taskSchedulingPolicy": {
+    "nodeFillType": "spread"
+  },
+  "taskSlotsPerNode": 1,
+  "virtualMachineConfiguration": {
+    "imageReference": {
+      "exactVersion": null,
+      "offer": "UbuntuServer",
+      "publisher": "Canonical",
+      "sku": "18.04-LTS",
+      "version": "18.04.202204010",
+      "virtualMachineImageId": null
+    },
+    "nodeAgentSkuId": "batch.node.ubuntu 18.04"
+  },
+  "vmSize": "standard_d16_v3"
+}
+
