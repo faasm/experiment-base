@@ -183,9 +183,9 @@ def create(ctx, size=None, region=AZURE_REGION, sgx=False, name=None, n=1):
         "--image {}".format(vm_image),
         "--size {}".format(vm_size),
         "--public-ip-sku Standard",
-#         "--os-disk-delete-option delete",
-#         "--data-disk-delete-option delete",
-#         "--nic-delete-option delete",
+        "--os-disk-delete-option delete",
+        "--data-disk-delete-option delete",
+        "--nic-delete-option delete",
     ]
 
     if n > 1:
