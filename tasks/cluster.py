@@ -68,7 +68,7 @@ def provision(
             "--kubernetes-version {}".format(k8s_ver),
             "--ssh-key-value {}".format(AZURE_PUB_SSH_KEY),
             "--location {}".format(location),
-            "{}".format("--enable-addons confcom" if sgx else ""),
+            "{}".format("--enable-addons confcom --enable-sgxquotehelper" if sgx else ""),
         ],
     )
 
