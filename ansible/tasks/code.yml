@@ -26,4 +26,5 @@
   with_items:
     - "clients/cpp"
     - "clients/python"
+    - "faabric"
 
