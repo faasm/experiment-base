@@ -96,25 +96,6 @@ def install_kubectl(ctx, system=False):
 
 
 @task
-def install_kn(ctx, system=False):
-    """
-    Install the knative CLI (kn)
-    """
-    url = "https://github.com/knative/client/releases/download/knative-v{}/kn-linux-amd64".format(
-        KNATIVE_VERSION
-    )
-    binary_path = _download_binary(url, "kn-linux-amd64")
-
-    # Symlink for kn command locally
-    run("rm -f kn", shell=True, check=True, cwd=BIN_DIR)
-    run("ln -s {} kn".format(binary_path), shell=True, check=True, cwd=BIN_DIR)
-
-    # Symlink for kn command globally
-    if system:
-        _symlink_global_bin(binary_path, "kn")
-
-
-@task
 def install_k9s(ctx, system=False):
     """
     Install the K9s CLI
