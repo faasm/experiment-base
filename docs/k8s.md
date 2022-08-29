@@ -5,14 +5,16 @@ environment for this project as per the [README](README.md).
 
 These instructions desribe:
 
-- Setting up k8s tooling like `kubectl` and `kn`
-- Setting up a k8s cluster on VMs
+- [Setting up k8s tooling like `kubectl` and `k9s`](#tooling)
+- [Setting up a k8s cluster on VMs](#k8s-on-vms)
 
-If you already have a cluster set up with `kubectl` and `kn` working, you can
-just follow the [Faasm k8s
+If you already have a cluster set up with `kubectl` working, you can just
+follow the [Faasm k8s
 docs](https://faasm.readthedocs.io/en/latest/source/kubernetes.html).
 
-## Kubectl
+## Tooling
+
+### Kubectl
 
 Install `kubectl` with:
 
@@ -34,23 +36,7 @@ which kubectl
 kubectl version --client
 ```
 
-## KNative client (kn)
-
-Install with:
-
-```bash
-inv k8s.install-kn --system
-```
-
-Check `kn` is working with:
-
-```bash
-which kn
-
-kn version
-```
-
-## K9s
+### K9s
 
 To improve your QoL when using k8s, you can install
 [`k9s`](https://github.com/derailed/k9s) too:
@@ -61,7 +47,7 @@ inv cluster.install-k9s --system
 which k9s
 ```
 
-## Setting up K8s on VMs
+## K8s on VMs
 
 These instructions are only relevant if you're installing k8s on a cluster of
 custom VMs. Managed k8s services like AKS will require their own specific setup
