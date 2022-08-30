@@ -42,7 +42,7 @@ To improve your QoL when using k8s, you can install
 [`k9s`](https://github.com/derailed/k9s) too:
 
 ```bash
-inv cluster.install-k9s --system
+inv k8s.install-k9s --system
 
 which k9s
 ```
