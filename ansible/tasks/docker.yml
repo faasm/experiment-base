@@ -12,7 +12,11 @@
 - name: "Install Docker"
   become: yes
   apt:
-    name: docker-ce
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-compose-plugin
     update_cache: yes
 
 - name: "Add user to docker group"
@@ -21,10 +25,3 @@
     name: "{{ ansible_user }}"
     groups: docker
     append: yes
-
-- name: "Install docker-compose"
-  become: yes
-  get_url:
-    url: "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-linux-x86_64"
-    dest: /usr/local/bin/docker-compose
-    mode: '0755'
