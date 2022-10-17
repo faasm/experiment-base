@@ -8,7 +8,6 @@ from tasks.util.ansible import run_ansible_playbook, check_inventory
 from tasks.util.env import (
     BIN_DIR,
     GLOBAL_BIN_DIR,
-    KNATIVE_VERSION,
     K9S_VERSION,
     INVENTORY_FILE,
     ANSIBLE_DIR,
