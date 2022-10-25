@@ -28,3 +28,10 @@
     - "clients/python"
     - "faabric"
 
+- name: "Clone specific experiment submodules"
+  shell: "git submodule update --init {{ item }}"
+  args:
+    chdir: "/home/{{ ansible_user }}/code/experiment-base"
+  with_items:
+    - "experiments/sgx"
+

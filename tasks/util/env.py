@@ -6,8 +6,7 @@ BIN_DIR = join(PROJ_ROOT, "bin")
 GLOBAL_BIN_DIR = "/usr/local/bin"
 
 # Note - this must match the version used by Faasm
-KNATIVE_VERSION = "1.1.0"
-K9S_VERSION = "0.24.15"
+K9S_VERSION = "0.26.6"
 
 ANSIBLE_DIR = join(PROJ_ROOT, "ansible")
 INVENTORY_DIR = join(ANSIBLE_DIR, "inventory")
@@ -70,7 +69,7 @@ AZURE_VM_IMAGE = "Canonical:0001-com-ubuntu-server-focal:20_04-lts:latest"
 AZURE_STANDALONE_VM_SIZE = "Standard_DS5_v2"
 
 AZURE_SGX_VM_IMAGE = "Canonical:UbuntuServer:18_04-lts-gen2:18.04.202109180"
-AZURE_SGX_VM_SIZE = "Standard_DC4ds_v3"
+AZURE_SGX_VM_SIZE = "Standard_DC8ds_v3"
 
 # ----------------------------
 # Azure Kubernetes Service (AKS) Cluster
