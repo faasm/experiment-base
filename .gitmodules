@@ -10,3 +10,6 @@
 [submodule "experiments/openmp"]
 	path = experiments/openmp
 	url = https://github.com/faasm/experiment-openmp
+[submodule "experiments/tensorflow"]
+	path = experiments/tensorflow
+	url = https://github.com/faasm/experiment-tensorflow
