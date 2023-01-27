@@ -19,5 +19,6 @@ if [ ! -d ${VENV_PATH} ]; then
 fi
 
 pip_cmd install -U pip setuptools wheel
+pip_cmd install -r requirements.txt
 
 popd >> /dev/null
