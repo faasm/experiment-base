@@ -51,16 +51,14 @@ FAASM_INVOKE_PORT = 8080
 # e.g. Standard_D16_v5: 16 vCPUs, 64GiB
 # e.g. Standard_D32_v5: 32 vCPUs, 128GiB
 #
-# Non-hyper-threaded machines include older D-series and newer H-series
-# machines:
-#
-# e.g. Standard_H16: 16 vCPUs, 112GiB
-# e.g. Standard_D5_v2: 16 vCPUs, 56GiB
-#
 # Links:
-# - Newer D-series: https://docs.microsoft.com/en-us/azure/virtual-machines/dv5-dsv5-series
-# - Older D-series (no HT): https://docs.microsoft.com/en-us/azure/virtual-machines/dv2-dsv2-series
-# - H-series (no HT): https://docs.microsoft.com/en-us/azure/virtual-machines/h-series
+# - D-series:
+#       https://docs.microsoft.com/en-us/azure/virtual-machines/dv5-dsv5-series
+#
+# VM Images: to upgrade a VM image, you can use the following command to check
+# for the latest image version available
+# az vm image list --all --publisher Canonical \
+#   | jq '[.[] | select(.sku=="22_04-lts-gen2")] | max_by(.version)'
 # ---------------------------
 
 AZURE_VM_ADMIN = "faasm"
@@ -68,7 +66,9 @@ AZURE_VM_IMAGE = "Canonical:0001-com-ubuntu-server-focal:20_04-lts:latest"
 
 AZURE_STANDALONE_VM_SIZE = "Standard_DS5_v2"
 
-AZURE_SGX_VM_IMAGE = "Canonical:UbuntuServer:18_04-lts-gen2:18.04.202109180"
+AZURE_SGX_VM_IMAGE = (
+    "Canonical:0001-com-ubuntu-server-jammy:22_04-lts-gen2:22.04.202301140"
+)
 AZURE_SGX_VM_SIZE = "Standard_DC8ds_v3"
 
 # ----------------------------

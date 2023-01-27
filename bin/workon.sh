@@ -8,14 +8,9 @@ pushd ${PROJ_ROOT} >> /dev/null
 export VIRTUAL_ENV_DISABLE_PROMPT=1
 
 if [ ! -d "venv" ]; then
-    echo "Setting up venv at $(pwd)/venv"
-    python3.8 -m venv venv
-    source venv/bin/activate
-    pip3 install -U pip
-    pip3 install -r requirements.txt
-else
-    source venv/bin/activate
+    ./bin/create_venv.sh
 fi
+source venv/bin/activate
 
 # Invoke tab-completion
 _complete_invoke() {
