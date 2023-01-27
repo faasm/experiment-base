@@ -9,9 +9,8 @@ export VIRTUAL_ENV_DISABLE_PROMPT=1
 
 if [ ! -d "venv" ]; then
     ./bin/create_venv.sh
-else
-    source venv/bin/activate
 fi
+source venv/bin/activate
 
 # Invoke tab-completion
 _complete_invoke() {
