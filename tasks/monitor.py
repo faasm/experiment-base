@@ -1,5 +1,4 @@
 from invoke import task
-from os.path import join
 from subprocess import run
 
 SHELL_IMG_NAME = "mcr.microsoft.com/aks/fundamental/base-ubuntu:v0.0.11"
