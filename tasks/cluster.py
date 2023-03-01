@@ -52,7 +52,7 @@ def provision(
     Provision the AKS cluster
     """
     k8s_ver = get_k8s_version()
-    sgx = sgx and (sgx != "False")
+    sgx = sgx and (sgx.lower() != "false")
 
     if sgx and "Standard_DC" not in vm:
         print(
