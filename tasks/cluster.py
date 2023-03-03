@@ -39,18 +39,20 @@ def list(ctx):
     _run_aks_cmd("list")
 
 
-@task
+@task(optional=["sgx"])
 def provision(
     ctx,
     nodes=AZURE_K8S_NODE_COUNT,
     vm=AZURE_K8S_VM_SIZE,
     location=AZURE_K8S_REGION,
+    name=AZURE_K8S_CLUSTER_NAME,
     sgx=False,
 ):
     """
     Provision the AKS cluster
     """
     k8s_ver = get_k8s_version()
+    sgx = sgx and (sgx.lower() != "false")
 
     if sgx and "Standard_DC" not in vm:
         print(
@@ -61,7 +63,7 @@ def provision(
     _run_aks_cmd(
         "create",
         [
-            "--name {}".format(AZURE_K8S_CLUSTER_NAME),
+            "--name {}".format(name),
             "--node-count {}".format(nodes),
             "--node-vm-size {}".format(vm),
             "--os-sku Ubuntu",
@@ -91,21 +93,21 @@ def details(ctx):
 
 
 @task
-def delete(ctx):
+def delete(ctx, name=AZURE_K8S_CLUSTER_NAME):
     """
     Delete the AKS cluster
     """
     _run_aks_cmd(
         "delete",
         [
-            "--name {}".format(AZURE_K8S_CLUSTER_NAME),
+            "--name {}".format(name),
             "--yes",
         ],
     )
 
 
 @task
-def credentials(ctx):
+def credentials(ctx, name=AZURE_K8S_CLUSTER_NAME):
     """
     Get credentials for the AKS cluster
     """
@@ -113,7 +115,7 @@ def credentials(ctx):
     _run_aks_cmd(
         "get-credentials",
         [
-            "--name {}".format(AZURE_K8S_CLUSTER_NAME),
+            "--name {}".format(name),
             "--overwrite-existing",
         ],
     )

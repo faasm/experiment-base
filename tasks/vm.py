@@ -14,6 +14,7 @@ from tasks.util.env import (
     AZURE_REGION,
     AZURE_VM_ADMIN,
     AZURE_VM_IMAGE,
+    AZURE_VM_OS_DISK_SIZE,
     AZURE_STANDALONE_VM_SIZE,
     AZURE_SGX_VM_IMAGE,
     AZURE_SGX_VM_SIZE,
@@ -182,6 +183,7 @@ def create(ctx, size=None, region=AZURE_REGION, sgx=False, name=None, n=1):
         "--ssh-key-value {}".format(AZURE_PUB_SSH_KEY),
         "--image {}".format(vm_image),
         "--size {}".format(vm_size),
+        "--os-disk-size-gb {}".format(AZURE_VM_OS_DISK_SIZE),
         "--public-ip-sku Standard",
         "--os-disk-delete-option delete",
         "--data-disk-delete-option delete",
@@ -232,6 +234,18 @@ ForwardAgent yes
             name, ip_addr, AZURE_VM_ADMIN
         )
     )
+
+
+@task
+def run_command(ctx, name, path, cmd):
+    """
+    Run a command on the remote VM
+    """
+    ip_addr = _get_ip(name)
+    cmd_base = _build_ssh_command(ip_addr)
+    cmd = "{} \"bash -c 'cd {} && {}'\"".format(cmd_base, path, cmd)
+    print(cmd)
+    run(cmd, shell=True, check=True)
 
 
 @task

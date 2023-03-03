@@ -63,6 +63,7 @@ FAASM_INVOKE_PORT = 8080
 
 AZURE_VM_ADMIN = "faasm"
 AZURE_VM_IMAGE = "Canonical:0001-com-ubuntu-server-focal:20_04-lts:latest"
+AZURE_VM_OS_DISK_SIZE = "63"
 
 AZURE_STANDALONE_VM_SIZE = "Standard_DS5_v2"
 
