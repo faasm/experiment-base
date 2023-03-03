@@ -237,6 +237,18 @@ ForwardAgent yes
 
 
 @task
+def run_command(ctx, name, path, cmd):
+    """
+    Run a command on the remote VM
+    """
+    ip_addr = _get_ip(name)
+    cmd_base = _build_ssh_command(ip_addr)
+    cmd = "{} \"bash -c 'cd {} && {}'\"".format(cmd_base, path, cmd)
+    print(cmd)
+    run(cmd, shell=True, check=True)
+
+
+@task
 def start(ctx, name):
     """
     Starts (powers on) the given Azure VM.
