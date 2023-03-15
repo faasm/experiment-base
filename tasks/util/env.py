@@ -14,6 +14,7 @@ INVENTORY_FILE = join(INVENTORY_DIR, "vms.ini")
 
 AZURE_RESOURCE_GROUP = "faasm"
 AZURE_REGION = "eastus"
+AZURE_ACR_NAME = "faasm.azurecr.io"
 
 AZURE_STORAGE_SKU = "Standard_LRS"
 
