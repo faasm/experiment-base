@@ -341,11 +341,14 @@ def ip(ctx, name):
 
 
 @task
-def setup(ctx):
+def setup(ctx, sgx=False):
     """
     Set up an individual VM with the basics
     """
     run_ansible_playbook("vm.yml")
+
+    if sgx:
+        run_ansible_playbook("sgx.yml")
 
 
 @task
