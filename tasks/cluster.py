@@ -107,7 +107,7 @@ def delete(ctx, name=AZURE_K8S_CLUSTER_NAME):
 
 
 @task
-def credentials(ctx, name=AZURE_K8S_CLUSTER_NAME):
+def credentials(ctx, name=AZURE_K8S_CLUSTER_NAME, out_file=None):
     """
     Get credentials for the AKS cluster
     """
@@ -117,6 +117,7 @@ def credentials(ctx, name=AZURE_K8S_CLUSTER_NAME):
         [
             "--name {}".format(name),
             "--overwrite-existing",
+            "--file {}".format(out_file) if out_file else "",
         ],
     )
 
