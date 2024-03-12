@@ -11,6 +11,10 @@ cloud provider or locally:
 - [Local cluster setup](docs/local.md).
 - [Installing and configuring K8s](docs/k8s.md).
 
+For a specific set of experiments, consider checking out the following repos:
+- [Faabric experiments](https://github.com/faasm/experiment-mpi)
+- [TLess experients](https://github.com/faasm/experiment-sgx)
+
 ## Setup
 
 ```bash
