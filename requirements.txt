@@ -1,4 +1,4 @@
-ansible==7.0.0
+ansible==8.5.0
 black==22.3.0
 faasmctl>=0.32.0
 flake8==3.9.2
