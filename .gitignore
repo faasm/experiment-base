@@ -19,3 +19,4 @@ __pycache__/
 *.egg
 __pypackages__/
 
+faasm.ini
