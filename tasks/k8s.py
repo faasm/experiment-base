@@ -99,13 +99,14 @@ def install_k9s(ctx, system=False):
     """
     Install the K9s CLI
     """
-    tar_name = "k9s_Linux_x86_64.tar.gz"
+    tar_name = "k9s_Linux_amd64.tar.gz"
     url = "https://github.com/derailed/k9s/releases/download/v{}/{}".format(
         K9S_VERSION, tar_name
     )
+    print(url)
 
     # Download the TAR
-    workdir = "/tmp/k9s"
+    workdir = "/tmp/k9s-csg"
     makedirs(workdir, exist_ok=True)
 
     cmd = "curl -LO {}".format(url)

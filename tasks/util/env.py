@@ -5,7 +5,7 @@ PROJ_ROOT = dirname(dirname(dirname(realpath(__file__))))
 BIN_DIR = join(PROJ_ROOT, "bin")
 GLOBAL_BIN_DIR = "/usr/local/bin"
 
-K9S_VERSION = "0.31.9"
+K9S_VERSION = "0.32.2"
 
 ANSIBLE_DIR = join(PROJ_ROOT, "ansible")
 INVENTORY_DIR = join(ANSIBLE_DIR, "inventory")
