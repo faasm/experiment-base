@@ -1,4 +1,5 @@
 from invoke import task
+from os.path import join
 from subprocess import run
 from tasks.util.env import (
     AZURE_ACR_NAME,
@@ -8,6 +9,7 @@ from tasks.util.env import (
     AZURE_K8S_VM_SIZE,
     AZURE_PUB_SSH_KEY,
     AZURE_RESOURCE_GROUP,
+    CONFIG_DIR,
     KUBECTL_BIN,
 )
 from tasks.util.version import get_k8s_version
@@ -46,12 +48,15 @@ def provision(
     location=AZURE_K8S_REGION,
     name=AZURE_K8S_CLUSTER_NAME,
     sgx=False,
+    granny=True,
 ):
     """
     Provision the AKS cluster
     """
     k8s_ver = get_k8s_version()
     sgx = sgx and (sgx.lower() != "false")
+    granny_kubelet_config = join(CONFIG_DIR, "granny_aks_kubelet_config.json")
+    granny_os_config = join(CONFIG_DIR, "granny_aks_os_config.json")
 
     if sgx and "Standard_DC" not in vm:
         print(
@@ -70,6 +75,16 @@ def provision(
             "--ssh-key-value {}".format(AZURE_PUB_SSH_KEY),
             "--location {}".format(location),
             "--attach-acr {}".format(AZURE_ACR_NAME.split(".")[0]),
+            "{}".format(
+                "--kubelet-config {}".format(granny_kubelet_config)
+                if granny
+                else ""
+            ),
+            "{}".format(
+                "--linux-os-config {}".format(granny_os_config)
+                if granny
+                else ""
+            ),
             "{}".format(
                 "--enable-addons confcom --enable-sgxquotehelper"
                 if sgx

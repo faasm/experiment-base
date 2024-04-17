@@ -4,6 +4,7 @@ PROJ_ROOT = dirname(dirname(dirname(realpath(__file__))))
 
 BIN_DIR = join(PROJ_ROOT, "bin")
 GLOBAL_BIN_DIR = "/usr/local/bin"
+CONFIG_DIR = join(PROJ_ROOT, "config")
 
 K9S_VERSION = "0.32.2"
 
