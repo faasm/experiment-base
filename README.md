@@ -18,12 +18,7 @@ For a specific set of experiments, consider checking out the following repos:
 ## Setup
 
 ```bash
-git submodule update --init
-
-# Install the python dependencies
-source bin/workon.sh
-pip3 install -U pip
-pip3 install -r requirements.txt
+source ./bin/workon.sh
 
 # List available tasks
 inv -l
