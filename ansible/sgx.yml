@@ -3,4 +3,4 @@
 - hosts: all
   gather_facts: yes
   tasks:
-    - include_tasks: tasks/fetch_docker_images.yml
+    - include_tasks: tasks/sgx_setup.yml

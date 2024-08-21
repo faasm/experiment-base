@@ -1,6 +1,0 @@
----
-
-- name: "Fetch the basic docker images"
-  shell: "docker compose pull"
-  args:
-    chdir: "/home/{{ ansible_user }}/code/faasm"

@@ -2,13 +2,13 @@
 
 - name: "Create code dir"
   file:
-    path: "/home/{{ ansible_user }}/code"
+    path: "/home/{{ ansible_user }}/git"
     state: directory
 
 - name: "Clone repos"
   git:
     repo: "https://www.github.com/faasm/{{ item }}.git"
-    dest: "/home/{{ ansible_user }}/code/{{ item }}"
+    dest: "/home/{{ ansible_user }}/git/faasm/{{ item }}"
     depth: 1
     update: yes
     recursive: no
@@ -22,7 +22,7 @@
 - name: "Clone specific Faasm submodules"
   shell: "git submodule update --init {{ item }}"
   args:
-    chdir: "/home/{{ ansible_user }}/code/faasm"
+    chdir: "/home/{{ ansible_user }}/git/faasm/faasm"
   with_items:
     - "clients/cpp"
     - "clients/python"

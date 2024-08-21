@@ -1,0 +1,4 @@
+---
+
+- name: "Set WASM VM env. variable to SGX"
+  shell: "echo 'FAASM_WASM_VM=sgx' >> /home/{{ ansible_user }}/.bash_aliases"

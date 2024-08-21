@@ -262,7 +262,7 @@ def deallocate(ctx, name):
     Deallocates, i.e. powers down and deallocates compute resource for the
     given Azure VM so that it's not billed.
     """
-    _vm_op("stop", name)
+    _vm_op("deallocate", name)
 
 
 @task
