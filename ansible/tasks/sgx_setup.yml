@@ -4,4 +4,4 @@
   shell: "echo 'export FAASM_WASM_VM=sgx' >> /home/{{ ansible_user }}/.bash_aliases"
 
 - name: "Set WASM VM env. variable to SGX"
-  shell: "echo 'export PATH=$PATH:/home/{{ ansible_user }}/.local/bin' >> /home/{{ ansible_user }}/.bash_aliases"
+  shell: "echo 'export PATH=$PATH:/home/{{ ansible_user }}/.local/bin' >> /home/{{ ansible_user }}/.bashrc"
