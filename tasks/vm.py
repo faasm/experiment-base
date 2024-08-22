@@ -248,7 +248,8 @@ def run_command(ctx, name, path, cmd, env=None):
     if env is not None:
         env_var_list = [env_var for env_var in env]
         env_var_str = " ".join(env_var_list)
-        env_var_str += " &&"
+        if len(env_var_list) > 0:
+            env_var_str += " &&"
 
     cmd = "{} \"bash -c '{}cd {} && {}'\"".format(
         cmd_base, env_var_str, path, cmd
