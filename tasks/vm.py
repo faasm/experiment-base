@@ -236,14 +236,23 @@ ForwardAgent yes
     )
 
 
-@task
-def run_command(ctx, name, path, cmd):
+@task(iterable=["env"])
+def run_command(ctx, name, path, cmd, env=None):
     """
     Run a command on the remote VM
     """
     ip_addr = _get_ip(name)
     cmd_base = _build_ssh_command(ip_addr)
-    cmd = "{} \"bash -c 'cd {} && {}'\"".format(cmd_base, path, cmd)
+
+    env_var_str = ""
+    if env is not None:
+        env_var_list = [env_var for env_var in env]
+        env_var_str = " ".join(env_var_list)
+        env_var_str += " &&"
+
+    cmd = "{} \"bash -c '{}cd {} && {}'\"".format(
+        cmd_base, env_var_str, path, cmd
+    )
     print(cmd)
     run(cmd, shell=True, check=True)
 
