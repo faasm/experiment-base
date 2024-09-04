@@ -5,3 +5,7 @@
 
 - name: "Set WASM VM env. variable to SGX"
   shell: "echo 'export PATH=$PATH:/home/{{ ansible_user }}/.local/bin' >> /home/{{ ansible_user }}/.bashrc"
+
+- name: "Upgrade to 6.x kernel for EDMM features"
+  shell: "apt update && apt upgrade -y && reboot"
+  become: yes
