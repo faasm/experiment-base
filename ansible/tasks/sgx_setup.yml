@@ -7,5 +7,9 @@
   shell: "echo 'export PATH=$PATH:/home/{{ ansible_user }}/.local/bin' >> /home/{{ ansible_user }}/.bashrc"
 
 - name: "Upgrade to 6.x kernel for EDMM features"
-  shell: "apt update && apt upgrade -y && reboot"
+  shell: "apt update && apt upgrade -y"
+  become: yes
+
+- name: "Reboot to pick-up latest kernel"
+  reboot:
   become: yes
