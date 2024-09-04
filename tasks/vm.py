@@ -244,12 +244,17 @@ def run_command(ctx, name, path, cmd, env=None):
     ip_addr = _get_ip(name)
     cmd_base = _build_ssh_command(ip_addr)
 
+    # Manually re-escape quotation marks for the underlying ssh command
+    cmd = cmd.replace('"', '\\"')
+
     env_var_str = ""
     if env is not None:
         env_var_list = [env_var for env_var in env]
-        env_var_str = " ".join(env_var_list)
+        for env_var in env_var_list:
+            env_var_str += f"export {env_var};"
+
         if len(env_var_list) > 0:
-            env_var_str += " &&"
+            env_var_str += " "
 
     cmd = "{} \"bash -c '{}cd {} && {}'\"".format(
         cmd_base, env_var_str, path, cmd
