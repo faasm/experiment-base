@@ -7,8 +7,16 @@
   shell: "echo 'export PATH=$PATH:/home/{{ ansible_user }}/.local/bin' >> /home/{{ ansible_user }}/.bashrc"
 
 - name: "Upgrade to 6.x kernel for EDMM features"
-  shell: "apt update && apt upgrade -y"
   become: yes
+  tasks:
+    - name: "Update apt cache"
+      apt:
+        update_cache: yes
+
+    - name: "Install the specific kernel version"
+      apt:
+        name: linux-image-unsigned-6.5.0-1011-azure
+        state: present
 
 - name: "Reboot to pick-up latest kernel"
   reboot:
