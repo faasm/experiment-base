@@ -2,7 +2,6 @@ from invoke import task
 from os.path import join
 from subprocess import run
 from tasks.util.env import (
-    AZURE_ACR_NAME,
     AZURE_K8S_CLUSTER_NAME,
     AZURE_K8S_NODE_COUNT,
     AZURE_K8S_REGION,
@@ -74,7 +73,6 @@ def provision(
             "--kubernetes-version {}".format(k8s_ver),
             "--ssh-key-value {}".format(AZURE_PUB_SSH_KEY),
             "--location {}".format(location),
-            "--attach-acr {}".format(AZURE_ACR_NAME.split(".")[0]),
             "{}".format(
                 "--kubelet-config {}".format(granny_kubelet_config)
                 if granny
